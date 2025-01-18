@@ -9,7 +9,47 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      [_ in never]: never
+      votings: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          type: Database["public"]["Enums"]["voting_type"] | null
+          user_id: string
+          voting_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon: string
+          id?: string
+          name: string
+          type?: Database["public"]["Enums"]["voting_type"] | null
+          user_id: string
+          voting_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          type?: Database["public"]["Enums"]["voting_type"] | null
+          user_id?: string
+          voting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +58,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      voting_type: "voting" | "nomination"
     }
     CompositeTypes: {
       [_ in never]: never

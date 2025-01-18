@@ -1,0 +1,1 @@
+alter table votings add column icon text not null;

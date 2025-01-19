@@ -9,43 +9,100 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          avatar: string | null
+          created_at: string
+          full_name: string
+          id: string
+        }
+        Insert: {
+          avatar?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+        }
+        Update: {
+          avatar?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      voters: {
+        Row: {
+          created_at: string
+          id: number
+          user_id: string
+          voting_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          user_id?: string
+          voting_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          user_id?: string
+          voting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voters_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voters_voting_id_fkey"
+            columns: ["voting_id"]
+            isOneToOne: false
+            referencedRelation: "votings"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       votings: {
         Row: {
           created_at: string
           description: string | null
           icon: string
           id: string
+          is_open: boolean
           name: string
           type: Database["public"]["Enums"]["voting_type"] | null
           user_id: string
-          voting_id: string
         }
         Insert: {
           created_at?: string
           description?: string | null
           icon: string
           id?: string
+          is_open?: boolean
           name: string
           type?: Database["public"]["Enums"]["voting_type"] | null
-          user_id: string
-          voting_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
           description?: string | null
           icon?: string
           id?: string
+          is_open?: boolean
           name?: string
           type?: Database["public"]["Enums"]["voting_type"] | null
           user_id?: string
-          voting_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "votings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]

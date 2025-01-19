@@ -8,9 +8,35 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useDeleteVoting } from "./use-delete-voting";
+import { useSupabase } from "@/utils/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Loader, Trash } from "lucide-react";
 
 export default function DeleteVoting() {
   const { data, close } = useDeleteVoting();
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const supabase = useSupabase();
+  const query = useQueryClient();
+
+  const deleteHandler = React.useCallback(async () => {
+    if (!data) return;
+
+    setLoading(true);
+
+    const { error } = await supabase.from("votings").delete().eq("id", data.id);
+
+    if (error) {
+      toast.error(error.message);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    close();
+    query.invalidateQueries({ queryKey: ["votings"] });
+  }, [close, data, query, supabase]);
 
   return (
     <Dialog open={data !== null} onOpenChange={close}>
@@ -18,10 +44,22 @@ export default function DeleteVoting() {
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This action cannot be undone. This will permanently delete voting
+            data from our servers.
           </DialogDescription>
         </DialogHeader>
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" onClick={close} disabled={loading}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={deleteHandler}
+            disabled={loading}
+          >
+            Delete {loading ? <Loader className="animate-spin" /> : <Trash />}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

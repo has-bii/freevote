@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { HomeIcon } from "lucide-react";
+import { HomeIcon, VoteIcon } from "lucide-react";
 
 import { NavVotings } from "@/components/nav-votings";
 import { NavUser } from "@/components/nav-user";
@@ -40,6 +40,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Link href="/">
                   <HomeIcon />
                   Getting Started
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === "/votings"}>
+                <Link href="/votings">
+                  <VoteIcon />
+                  My Votings
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

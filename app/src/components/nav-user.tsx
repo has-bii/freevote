@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { logout } from "@/app/(api)/logout/route";
+import { logout } from "@/app/(api)/logout/logout";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 

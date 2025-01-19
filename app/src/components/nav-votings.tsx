@@ -22,7 +22,7 @@ import {
 import { useSupabase } from "@/utils/supabase/client";
 import { useGetVotings } from "@/hooks/votings/use-get-votings";
 import Link from "next/link";
-import AddVoting from "./add-voting";
+import AddVoting from "./voting/add-voting";
 import { useDeleteVoting } from "./voting/delete/use-delete-voting";
 
 export function NavVotings() {

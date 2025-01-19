@@ -1,0 +1,1 @@
+alter table voters alter column user_id set default auth.uid();

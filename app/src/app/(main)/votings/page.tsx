@@ -63,9 +63,12 @@ export default function Page() {
             </div>
           ) : (
             data.map(
-              ({ id, is_open, name, icon, profiles, user_id, created_at }) => (
+              (
+                { id, is_open, name, icon, profiles, user_id, created_at },
+                i,
+              ) => (
                 <Link
-                  key={id}
+                  key={i}
                   href={`/votings/${id}`}
                   role="link"
                   className="flex h-28 w-full flex-col rounded-lg border px-4 py-3"

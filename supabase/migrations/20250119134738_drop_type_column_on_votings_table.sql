@@ -1,0 +1,1 @@
+alter table votings drop column type;

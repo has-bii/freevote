@@ -29,8 +29,6 @@ export const stringAlphabetNumber = z
 
 export const description = z.string().trim().max(255, "Max 255 characters");
 
-export const voting_type = z.enum(["voting", "nomination"]);
-
 export const icon = z.enum(IconNames);
 
 export const voting_id = z.string().length(6);

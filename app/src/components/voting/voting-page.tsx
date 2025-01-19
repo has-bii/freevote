@@ -19,6 +19,7 @@ import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { Badge } from "@/components/ui/badge";
 import VotingDropdown from "@/components/voting/voting-dropdown";
+import VotingPageNav from "@/components/voting/voting-page-nav";
 
 type Props = {
   data: TVoting;
@@ -50,7 +51,7 @@ export default function VotingPage({ data }: Props) {
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex-1 p-4 pt-0">
+      <div className="p-4 pt-0">
         <div className="flex items-start gap-4">
           <DynamicIcon name={data.icon as IconName} size={56} />
           <div className="5 space-y-1">
@@ -68,6 +69,12 @@ export default function VotingPage({ data }: Props) {
         <p className="mt-4 text-pretty text-sm text-muted-foreground">
           {data.description}
         </p>
+
+        <React.Suspense>
+          <div className="mt-4">
+            <VotingPageNav id={data.id} />
+          </div>
+        </React.Suspense>
       </div>
     </>
   );

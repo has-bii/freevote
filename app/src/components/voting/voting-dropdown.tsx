@@ -49,7 +49,7 @@ export default function VotingDropdown({ data }: Props) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="lg:hidden">
-          <Button size="icon">
+          <Button size="icon" variant="ghost">
             <EllipsisVertical />
           </Button>
         </DropdownMenuTrigger>
@@ -58,7 +58,7 @@ export default function VotingDropdown({ data }: Props) {
             {data.is_open ? "Close voting" : "Open voting"}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => openShare(data.id)}>
-            Share voting session
+            Share session
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

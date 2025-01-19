@@ -10,12 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { z } from "zod";
-import {
-  description,
-  icon,
-  stringAlphabetNumber,
-  voting_type,
-} from "@/lib/form-schema";
+import { description, icon, stringAlphabetNumber } from "@/lib/form-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -51,7 +46,6 @@ type Props = {
 const FormSchema = z.object({
   name: stringAlphabetNumber,
   description: description,
-  type: voting_type,
   icon: icon,
 });
 
@@ -65,7 +59,6 @@ export default function AddVoting({ children }: Props) {
     defaultValues: {
       name: "",
       description: "",
-      type: "voting",
       icon: "target",
     },
   });
@@ -133,30 +126,6 @@ export default function AddVoting({ children }: Props) {
                     />
                   </FormControl>
                   <FormDescription>Max is 255 characters.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="voting">Voting</SelectItem>
-                      <SelectItem value="nomination">Nomination</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

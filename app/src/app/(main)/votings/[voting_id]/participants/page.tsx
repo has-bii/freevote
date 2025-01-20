@@ -23,7 +23,7 @@ export default async function VotingParticipantsPage({ params }: Props) {
   return (
     <>
       <VotingPage data={data} />
-      <Participants id={voting_id} />
+      <Participants id={voting_id} owner_id={data.user_id} />
     </>
   );
 }

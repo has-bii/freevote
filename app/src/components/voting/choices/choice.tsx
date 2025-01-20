@@ -4,8 +4,9 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Link2, Pencil } from "lucide-react";
+import { Link2, Pencil, Trash2 } from "lucide-react";
 import EditChoice from "./edit-choice";
+import RemoveChoice from "./remove-choice";
 
 type Props = {
   data: TChoice;
@@ -31,16 +32,28 @@ export default function Choice({ data, isOwner }: Props) {
             Color
           </Badge>
           {isOwner && (
-            <EditChoice data={data}>
-              <Badge
-                className="flex items-center gap-2"
-                variant="secondary"
-                role="button"
-              >
-                <Pencil className="size-3" />
-                Edit
-              </Badge>
-            </EditChoice>
+            <>
+              <EditChoice data={data}>
+                <Badge
+                  className="flex items-center gap-2"
+                  variant="secondary"
+                  role="button"
+                >
+                  <Pencil className="size-3" />
+                  <span className="hidden lg:block">Edit</span>
+                </Badge>
+              </EditChoice>
+              <RemoveChoice data={data}>
+                <Badge
+                  className="flex items-center gap-2"
+                  variant="destructive"
+                  role="button"
+                >
+                  <Trash2 className="size-3" />
+                  <span className="hidden lg:block">Delete</span>
+                </Badge>
+              </RemoveChoice>
+            </>
           )}
         </div>
         <CardDescription>{data.description}</CardDescription>

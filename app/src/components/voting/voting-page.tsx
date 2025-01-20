@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { TVoting } from "@/types/model";
 import Link from "next/link";
 import { useSupabase } from "@/utils/supabase/client";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
@@ -21,12 +20,12 @@ import VotingDropdown from "@/components/voting/voting-dropdown";
 import VotingPageNav from "@/components/voting/voting-page-nav";
 
 type Props = {
-  data: TVoting;
+  voting_id: string;
 };
 
-export default function VotingPage({ data }: Props) {
+export default function VotingPage({ voting_id }: Props) {
   const supabase = useSupabase();
-  const { data: votingData } = useGetVotingById(supabase, data.id, data);
+  const { data: votingData } = useGetVotingById(supabase, voting_id);
 
   return (
     <>
@@ -43,7 +42,7 @@ export default function VotingPage({ data }: Props) {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>{data.name}</BreadcrumbPage>
+                <BreadcrumbPage>{votingData?.name}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -51,25 +50,29 @@ export default function VotingPage({ data }: Props) {
       </header>
       <div className="p-4 pt-0">
         <div className="flex items-start gap-4">
-          <DynamicIcon name={data.icon as IconName} size={56} />
+          {votingData && (
+            <DynamicIcon name={votingData.icon as IconName} size={56} />
+          )}
           <div className="5 space-y-1">
-            <p className="text-xl font-bold">{data.name}</p>
-            <Badge variant={votingData.is_open ? "default" : "secondary"}>
-              {votingData.is_open ? "open" : "closed"}
+            <p className="text-xl font-bold">{votingData?.name}</p>
+            <Badge variant={votingData?.is_open ? "default" : "secondary"}>
+              {votingData?.is_open ? "open" : "closed"}
             </Badge>
           </div>
 
-          <div className="ml-auto">
-            <VotingDropdown data={votingData} />
-          </div>
+          {votingData && (
+            <div className="ml-auto">
+              <VotingDropdown data={votingData} />
+            </div>
+          )}
         </div>
         <p className="mt-4 text-pretty text-sm text-muted-foreground">
-          {data.description}
+          {votingData?.description}
         </p>
 
         <React.Suspense>
           <div className="mt-4">
-            <VotingPageNav id={data.id} />
+            <VotingPageNav id={voting_id} />
           </div>
         </React.Suspense>
       </div>

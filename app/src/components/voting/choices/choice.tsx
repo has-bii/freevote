@@ -39,7 +39,7 @@ export default function Choice({ data, isOwner }: Props) {
                   variant="secondary"
                   role="button"
                 >
-                  <Pencil className="size-3" />
+                  <Pencil className="size-4" />
                   <span className="hidden lg:block">Edit</span>
                 </Badge>
               </EditChoice>
@@ -49,7 +49,7 @@ export default function Choice({ data, isOwner }: Props) {
                   variant="destructive"
                   role="button"
                 >
-                  <Trash2 className="size-3" />
+                  <Trash2 className="size-4" />
                   <span className="hidden lg:block">Delete</span>
                 </Badge>
               </RemoveChoice>

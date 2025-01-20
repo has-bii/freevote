@@ -3,27 +3,30 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAuth } from "@/hooks/auth/use-auth";
 import { useGetChoices } from "@/hooks/choices/use-get-choices";
-import { TVoting } from "@/types/model";
 import { useSupabase } from "@/utils/supabase/client";
 import React from "react";
 import AddChoice from "./add-choice";
 import Choice from "./choice";
+import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 
 type Props = {
-  data: TVoting;
+  voting_id: string;
 };
 
-export default function ChoicesPage({ data }: Props) {
+export default function ChoicesPage({ voting_id }: Props) {
   const supabase = useSupabase();
   const { data: user } = useGetAuth(supabase);
-  const { data: choices } = useGetChoices(supabase, data.id);
+  const { data: choices } = useGetChoices(supabase, voting_id);
+  const { data: votingData } = useGetVotingById(supabase, voting_id);
 
   return (
     <div className="space-y-4 p-4 pt-0">
-      {user?.id === data.user_id && (
+      {votingData && user && votingData.user_id === user.id ? (
         <div className="flex justify-end">
-          <AddChoice id={data.id} />
+          <AddChoice id={votingData.id} />
         </div>
+      ) : (
+        ""
       )}
       <div className="flex flex-col gap-4">
         {choices === undefined ? (
@@ -41,7 +44,7 @@ export default function ChoicesPage({ data }: Props) {
             <Choice
               key={choice.id}
               data={choice}
-              isOwner={user?.id === data.user_id}
+              isOwner={user?.id === votingData?.user_id}
             />
           ))
         )}

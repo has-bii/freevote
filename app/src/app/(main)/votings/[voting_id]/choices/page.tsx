@@ -1,7 +1,4 @@
 import React from "react";
-import VotingPage from "@/components/voting/voting-page";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import ChoicesPage from "@/components/voting/choices/choices-page";
 
 type Props = {
@@ -10,20 +7,6 @@ type Props = {
 
 export default async function VotingServerPage({ params }: Props) {
   const { voting_id } = await params;
-  const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("votings")
-    .select("*")
-    .eq("id", voting_id)
-    .single();
-
-  if (error) redirect("/votings/not-found");
-
-  return (
-    <>
-      <VotingPage data={data} />
-      <ChoicesPage data={data} />
-    </>
-  );
+  return <ChoicesPage voting_id={voting_id} />;
 }

@@ -18,25 +18,26 @@ import { Button } from "@/components/ui/button";
 import RemoveParticipant, {
   TParticipantRemove,
 } from "./remove/remove-participant";
+import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 
 type Props = {
   id: string;
-  owner_id: string;
 };
 
-export default function Participants({ id, owner_id }: Props) {
+export default function Participants({ id }: Props) {
   const supabase = useSupabase();
   const { data: user } = useGetAuth(supabase);
+  const { data: votingData } = useGetVotingById(supabase, id);
   const { data: participants } = useGetParticipants(supabase, id);
   const [removeData, setRemoveData] = React.useState<
     TParticipantRemove | undefined
   >();
 
   const is_owner = React.useMemo(() => {
-    if (!user) return false;
+    if (!user || !votingData) return false;
 
-    return user.id === owner_id;
-  }, [user, owner_id]);
+    return user.id === votingData?.user_id;
+  }, [user, votingData]);
 
   return (
     <div className="p-4 pt-0">

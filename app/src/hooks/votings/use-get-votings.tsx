@@ -1,4 +1,3 @@
-import { TVoting } from "@/types/model";
 import { TSupabaseClient } from "@/utils/supabase/server";
 import { useQuery } from "@tanstack/react-query";
 import { compareDesc } from "date-fns";
@@ -32,14 +31,9 @@ export const useGetVotings = (supabase: TSupabaseClient) =>
     },
   });
 
-export const useGetVotingById = (
-  supabase: TSupabaseClient,
-  id: string,
-  initialData: TVoting,
-) =>
+export const useGetVotingById = (supabase: TSupabaseClient, id: string) =>
   useQuery({
     queryKey: ["voting", id],
-    initialData,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("votings")

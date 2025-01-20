@@ -23,7 +23,7 @@ import { useSupabase } from "@/utils/supabase/client";
 import { useGetVotings } from "@/hooks/votings/use-get-votings";
 import Link from "next/link";
 import AddVoting from "./voting/add-voting";
-import { useDeleteVoting } from "./voting/delete/use-delete-voting";
+import { useDeleteVoting } from "../hooks/votings/use-modal-delete-voting";
 
 export function NavVotings() {
   const { isMobile } = useSidebar();

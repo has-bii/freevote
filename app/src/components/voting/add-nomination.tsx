@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useAddNomination } from "./use-add-nomination";
+import { useAddNomination } from "../../hooks/use-modal-add-nomination";
 
 type Props = {
   id: string;

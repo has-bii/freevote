@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useDeleteVoting } from "./use-delete-voting";
+import { useDeleteVoting } from "../../hooks/votings/use-modal-delete-voting";
 import { useSupabase } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

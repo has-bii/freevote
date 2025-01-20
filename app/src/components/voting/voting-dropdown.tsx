@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useShareVoting } from "./share/use-share-voting";
 import ShareVoting from "./share/share-voting";
 import { useGetAuth } from "@/hooks/auth/use-auth";
-import { useIsParticipant } from "@/hooks/participants/is-participant/use-is-participant";
+import { useIsParticipant } from "@/hooks/participants/use-is-participant";
 import LeaveParticipant from "./participants/leave-participant";
 import { useModalLeave } from "@/hooks/use-modal-leave";
 

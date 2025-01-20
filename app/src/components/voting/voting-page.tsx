@@ -14,7 +14,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { TVoting } from "@/types/model";
 import Link from "next/link";
 import { useSupabase } from "@/utils/supabase/client";
-import { useGetAuth } from "@/hooks/auth/use-auth";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +26,6 @@ type Props = {
 
 export default function VotingPage({ data }: Props) {
   const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
   const { data: votingData } = useGetVotingById(supabase, data.id, data);
 
   return (
@@ -60,11 +58,10 @@ export default function VotingPage({ data }: Props) {
               {votingData.is_open ? "open" : "closed"}
             </Badge>
           </div>
-          {user?.id === votingData.user_id && (
-            <div className="ml-auto">
-              <VotingDropdown data={votingData} />
-            </div>
-          )}
+
+          <div className="ml-auto">
+            <VotingDropdown data={votingData} />
+          </div>
         </div>
         <p className="mt-4 text-pretty text-sm text-muted-foreground">
           {data.description}

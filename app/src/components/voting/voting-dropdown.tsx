@@ -15,6 +15,10 @@ import { useSupabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { useShareVoting } from "./share/use-share-voting";
 import ShareVoting from "./share/share-voting";
+import { useGetAuth } from "@/hooks/auth/use-auth";
+import { useIsParticipant } from "@/hooks/participants/is-participant/use-is-participant";
+import LeaveParticipant from "./participants/leave-participant";
+import { useModalLeave } from "@/hooks/use-modal-leave";
 
 type Props = {
   data: TVoting;
@@ -24,6 +28,9 @@ export default function VotingDropdown({ data }: Props) {
   const query = useQueryClient();
   const supabase = useSupabase();
   const { open: openShare } = useShareVoting();
+  const { open: openLeave } = useModalLeave();
+  const { data: user } = useGetAuth(supabase);
+  const { data: isParticipant } = useIsParticipant(supabase, data.id);
 
   const openCloseHandler = async (state: boolean) => {
     const toastId = toast.loading("Loading...", { duration: Infinity });
@@ -54,23 +61,32 @@ export default function VotingDropdown({ data }: Props) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openCloseHandler(!data.is_open)}>
-            {data.is_open ? "Close voting" : "Open voting"}
-          </DropdownMenuItem>
+          {data.user_id === user?.id && (
+            <DropdownMenuItem onClick={() => openCloseHandler(!data.is_open)}>
+              {data.is_open ? "Close voting" : "Open voting"}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => openShare(data.id)}>
             Share session
           </DropdownMenuItem>
+          {!!isParticipant && (
+            <DropdownMenuItem onClick={() => openLeave(true)}>
+              Leave
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
       <div className="hidden items-center gap-2 lg:flex">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => openCloseHandler(!data.is_open)}
-        >
-          {data.is_open ? "Close voting" : "Open voting"}
-        </Button>
+        {data.user_id === user?.id && (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => openCloseHandler(!data.is_open)}
+          >
+            {data.is_open ? "Close voting" : "Open voting"}
+          </Button>
+        )}
         <Button
           size="sm"
           variant="secondary"
@@ -78,9 +94,25 @@ export default function VotingDropdown({ data }: Props) {
         >
           Share
         </Button>
+        {!!isParticipant && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => openLeave(true)}
+          >
+            Leave
+          </Button>
+        )}
       </div>
 
       <ShareVoting />
+      {isParticipant && (
+        <LeaveParticipant
+          data={isParticipant}
+          query={query}
+          supabase={supabase}
+        />
+      )}
     </>
   );
 }

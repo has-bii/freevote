@@ -19,6 +19,7 @@ import RemoveParticipant, {
   TParticipantRemove,
 } from "./remove/remove-participant";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
   id: string;
@@ -65,7 +66,20 @@ export default function Participants({ id }: Props) {
                 return (
                   <TableRow key={id}>
                     <TableCell className="font-medium">{i + 1}</TableCell>
-                    <TableCell>{profiles.full_name}</TableCell>
+                    <TableCell>
+                      <div className="inline-flex items-center gap-2">
+                        <Avatar>
+                          <AvatarImage src={profiles.avatar ?? undefined} />
+                          <AvatarFallback>
+                            {profiles.full_name
+                              .split(" ")
+                              .map((c) => c[0].toUpperCase())
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p>{profiles.full_name}</p>
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">
                       {format(created_at, "PP p")}
                     </TableCell>

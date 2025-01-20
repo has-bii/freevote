@@ -2,6 +2,7 @@ import React from "react";
 import VotingPage from "@/components/voting/voting-page";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import ChoicesPage from "@/components/voting/choices/choices-page";
 
 type Props = {
   params: Promise<{ voting_id: string }>;
@@ -22,6 +23,7 @@ export default async function VotingServerPage({ params }: Props) {
   return (
     <>
       <VotingPage data={data} />
+      <ChoicesPage data={data} />
     </>
   );
 }

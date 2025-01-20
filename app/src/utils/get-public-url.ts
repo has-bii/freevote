@@ -3,7 +3,7 @@ import { TSupabaseClient } from "./supabase/server";
 type Params = {
   url: string;
   supabase: TSupabaseClient;
-  bucket: "avatars";
+  bucket: "avatars" | "choices";
 };
 
 export const getPublicUrl = ({ bucket, supabase, url }: Params) =>

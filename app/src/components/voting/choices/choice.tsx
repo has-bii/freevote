@@ -4,13 +4,15 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Link2 } from "lucide-react";
+import { Link2, Pencil } from "lucide-react";
+import EditChoice from "./edit-choice";
 
 type Props = {
   data: TChoice;
+  isOwner: boolean;
 };
 
-export default function Choice({ data }: Props) {
+export default function Choice({ data, isOwner }: Props) {
   return (
     <Card className="flex items-start justify-between p-6">
       {/* Content */}
@@ -28,6 +30,18 @@ export default function Choice({ data }: Props) {
             />
             Color
           </Badge>
+          {isOwner && (
+            <EditChoice data={data}>
+              <Badge
+                className="flex items-center gap-2"
+                variant="secondary"
+                role="button"
+              >
+                <Pencil className="size-3" />
+                Edit
+              </Badge>
+            </EditChoice>
+          )}
         </div>
         <CardDescription>{data.description}</CardDescription>
         {data.link && (

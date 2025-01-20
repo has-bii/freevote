@@ -37,7 +37,13 @@ export default function ChoicesPage({ data }: Props) {
             </p>
           </div>
         ) : (
-          choices.map((choice) => <Choice key={choice.id} data={choice} />)
+          choices.map((choice) => (
+            <Choice
+              key={choice.id}
+              data={choice}
+              isOwner={user?.id === data.user_id}
+            />
+          ))
         )}
       </div>
     </div>

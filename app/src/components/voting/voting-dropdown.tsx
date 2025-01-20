@@ -19,6 +19,7 @@ import { useGetAuth } from "@/hooks/auth/use-auth";
 import { useIsParticipant } from "@/hooks/participants/use-is-participant";
 import LeaveParticipant from "./participants/leave-participant";
 import { useModalLeave } from "@/hooks/use-modal-leave";
+import { joinSession } from "@/actions/join-session";
 
 type Props = {
   data: TVoting;
@@ -74,6 +75,15 @@ export default function VotingDropdown({ data }: Props) {
               Leave
             </DropdownMenuItem>
           )}
+          {!isParticipant && data.is_open ? (
+            <DropdownMenuItem
+              onClick={() => joinSession({ voting_id: data.id })}
+            >
+              Join
+            </DropdownMenuItem>
+          ) : (
+            ""
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -102,6 +112,17 @@ export default function VotingDropdown({ data }: Props) {
           >
             Leave
           </Button>
+        )}
+        {!isParticipant && data.is_open ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => joinSession({ voting_id: data.id })}
+          >
+            Join
+          </Button>
+        ) : (
+          ""
         )}
       </div>
 

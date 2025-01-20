@@ -19,5 +19,9 @@ export default async function VotingServerPage({ params }: Props) {
 
   if (error) redirect("/votings/not-found");
 
-  return <VotingPage data={data} />;
+  return (
+    <>
+      <VotingPage data={data} />
+    </>
+  );
 }

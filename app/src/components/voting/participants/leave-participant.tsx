@@ -15,7 +15,6 @@ import { TSupabaseClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Loader, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 type Props = {
   data: TParticipant;
@@ -26,7 +25,6 @@ type Props = {
 export default function LeaveParticipant({ data, query, supabase }: Props) {
   const { isOpen, close } = useModalLeave();
   const [loading, setLoading] = React.useState(false);
-  const router = useRouter();
 
   const leaveHandler = async () => {
     setLoading(true);
@@ -41,7 +39,6 @@ export default function LeaveParticipant({ data, query, supabase }: Props) {
     close();
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
     query.invalidateQueries({ queryKey: ["is participant", data.voting_id] });
-    router.push("/votings");
   };
 
   return (

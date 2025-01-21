@@ -9,7 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical } from "lucide-react";
+import {
+  EllipsisVertical,
+  ExternalLink,
+  LogOut,
+  SquareCheck,
+  SquareX,
+  Trash2,
+} from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -20,6 +27,7 @@ import { useIsParticipant } from "@/hooks/participants/use-is-participant";
 import LeaveParticipant from "./participants/leave-participant";
 import { useModalLeave } from "@/hooks/use-modal-leave";
 import { joinSession } from "@/actions/join-session";
+import { useDeleteVoting } from "@/hooks/votings/use-modal-delete-voting";
 
 type Props = {
   data: TVoting;
@@ -28,6 +36,7 @@ type Props = {
 export default function VotingDropdown({ data }: Props) {
   const query = useQueryClient();
   const supabase = useSupabase();
+  const { open: showDelete } = useDeleteVoting();
   const { open: openShare } = useShareVoting();
   const { open: openLeave } = useModalLeave();
   const { data: user } = useGetAuth(supabase);
@@ -53,6 +62,10 @@ export default function VotingDropdown({ data }: Props) {
     toast.dismiss(toastId);
   };
 
+  const is_owner = React.useMemo(() => {
+    return user?.id === data.user_id;
+  }, [data.user_id, user?.id]);
+
   return (
     <>
       <DropdownMenu>
@@ -64,18 +77,21 @@ export default function VotingDropdown({ data }: Props) {
         <DropdownMenuContent>
           {data.user_id === user?.id && (
             <DropdownMenuItem onClick={() => openCloseHandler(!data.is_open)}>
+              {data.is_open ? <SquareX /> : <SquareCheck />}
               {data.is_open ? "Close voting" : "Open voting"}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => openShare(data.id)}>
-            Share session
+            <ExternalLink />
+            Share
           </DropdownMenuItem>
           {!!isParticipant && (
             <DropdownMenuItem onClick={() => openLeave(true)}>
+              <LogOut />
               Leave
             </DropdownMenuItem>
           )}
-          {!isParticipant && user?.id !== data.user_id && data.is_open ? (
+          {!isParticipant && !is_owner && data.is_open ? (
             <DropdownMenuItem
               onClick={() => joinSession({ voting_id: data.id })}
             >
@@ -83,6 +99,12 @@ export default function VotingDropdown({ data }: Props) {
             </DropdownMenuItem>
           ) : (
             ""
+          )}
+          {is_owner && (
+            <DropdownMenuItem onClick={() => showDelete(data)}>
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -94,6 +116,7 @@ export default function VotingDropdown({ data }: Props) {
             variant="secondary"
             onClick={() => openCloseHandler(!data.is_open)}
           >
+            {data.is_open ? <SquareX /> : <SquareCheck />}
             {data.is_open ? "Close voting" : "Open voting"}
           </Button>
         )}
@@ -102,6 +125,7 @@ export default function VotingDropdown({ data }: Props) {
           variant="secondary"
           onClick={() => openShare(data.id)}
         >
+          <ExternalLink />
           Share
         </Button>
         {!!isParticipant && (
@@ -113,7 +137,7 @@ export default function VotingDropdown({ data }: Props) {
             Leave
           </Button>
         )}
-        {!isParticipant && user?.id !== data.user_id && data.is_open ? (
+        {!isParticipant && !is_owner && data.is_open ? (
           <Button
             size="sm"
             variant="secondary"
@@ -123,6 +147,16 @@ export default function VotingDropdown({ data }: Props) {
           </Button>
         ) : (
           ""
+        )}
+
+        {user?.id === data.user_id && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => showDelete(data)}
+          >
+            <Trash2 /> Delete
+          </Button>
         )}
       </div>
 

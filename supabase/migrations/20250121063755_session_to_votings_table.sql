@@ -8,7 +8,6 @@ grant all privileges on all tables in schema cron to postgres;
 
 CREATE OR REPLACE FUNCTION end_expired_voting_sessions()
 RETURNS VOID
-LANGUAGE "plpgsql" 
 SECURITY DEFINER
 SET search_path TO ''
 AS $$

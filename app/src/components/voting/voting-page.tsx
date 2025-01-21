@@ -18,6 +18,9 @@ import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { Badge } from "@/components/ui/badge";
 import VotingDropdown from "@/components/voting/voting-dropdown";
 import VotingPageNav from "@/components/voting/voting-page-nav";
+import { useQueryClient } from "@tanstack/react-query";
+import { TVoting } from "@/types/model";
+import { format } from "date-fns";
 
 type Props = {
   voting_id: string;
@@ -25,7 +28,29 @@ type Props = {
 
 export default function VotingPage({ voting_id }: Props) {
   const supabase = useSupabase();
+  const query = useQueryClient();
   const { data: votingData } = useGetVotingById(supabase, voting_id);
+
+  React.useEffect(() => {
+    const channel = supabase
+      .channel(`realtime voting ${voting_id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "votings",
+        },
+        ({ new: newData }: { new: TVoting }) => {
+          query.setQueryData<TVoting>(["voting", voting_id], () => newData);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [query, supabase, voting_id]);
 
   return (
     <>
@@ -69,6 +94,29 @@ export default function VotingPage({ voting_id }: Props) {
         <p className="mt-4 text-pretty text-sm text-muted-foreground">
           {votingData?.description}
         </p>
+
+        {votingData?.is_start && (
+          <div className="mt-4 flex w-fit items-center gap-4">
+            <div className="inline-flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Status</span>
+              <Badge variant="outline" className="inline-flex gap-1">
+                <span className="h-2 w-2 rounded-full bg-green-400" />
+                Started
+              </Badge>
+            </div>
+
+            {votingData.expired_session && (
+              <div className="inline-flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Stopped at
+                </span>
+                <Badge variant="default">
+                  {format(votingData.expired_session, "PP p")}
+                </Badge>
+              </div>
+            )}
+          </div>
+        )}
 
         <React.Suspense>
           <div className="mt-4">

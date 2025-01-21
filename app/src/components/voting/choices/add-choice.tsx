@@ -97,6 +97,7 @@ export default function AddChoice({ id }: Props) {
 
     setOpen(false);
     form.reset();
+    setFile(null);
   }
 
   const fileOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

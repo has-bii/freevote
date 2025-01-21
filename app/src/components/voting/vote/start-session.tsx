@@ -20,7 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import { CalendarIcon, Loader, Timer } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -60,13 +60,8 @@ export default function StartSession({ data, ...rest }: Props) {
       return;
     }
 
-    const newDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDay(),
-      hours,
-      minutes,
-    );
+    let newDate = setHours(date, hours);
+    newDate = setMinutes(date, minutes);
 
     const { error, data: newData } = await supabase
       .from("votings")

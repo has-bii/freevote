@@ -1,13 +1,12 @@
 "use client";
 
-import { Folder, Forward, MoreHorizontal, Plus, Trash2 } from "lucide-react";
+import { MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -57,15 +56,6 @@ export function NavVotings() {
                     side={isMobile ? "bottom" : "right"}
                     align={isMobile ? "end" : "start"}
                   >
-                    <DropdownMenuItem>
-                      <Folder className="text-muted-foreground" />
-                      <span>View Project</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Forward className="text-muted-foreground" />
-                      <span>Share Project</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => {
                         open(item);

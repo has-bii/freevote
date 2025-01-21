@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -101,10 +102,13 @@ export default function VotingDropdown({ data }: Props) {
             ""
           )}
           {is_owner && (
-            <DropdownMenuItem onClick={() => showDelete(data)}>
-              <Trash2 />
-              Delete
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => showDelete(data)}>
+                <Trash2 />
+                Delete
+              </DropdownMenuItem>
+            </>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -149,7 +153,7 @@ export default function VotingDropdown({ data }: Props) {
           ""
         )}
 
-        {user?.id === data.user_id && (
+        {is_owner && (
           <Button
             size="sm"
             variant="destructive"

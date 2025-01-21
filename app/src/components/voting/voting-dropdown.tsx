@@ -75,7 +75,7 @@ export default function VotingDropdown({ data }: Props) {
               Leave
             </DropdownMenuItem>
           )}
-          {!isParticipant && data.is_open ? (
+          {!isParticipant && user?.id !== data.user_id && data.is_open ? (
             <DropdownMenuItem
               onClick={() => joinSession({ voting_id: data.id })}
             >
@@ -113,7 +113,7 @@ export default function VotingDropdown({ data }: Props) {
             Leave
           </Button>
         )}
-        {!isParticipant && data.is_open ? (
+        {!isParticipant && user?.id !== data.user_id && data.is_open ? (
           <Button
             size="sm"
             variant="secondary"

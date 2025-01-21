@@ -52,53 +52,63 @@ export default function Participants({ id }: Props) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {participants === undefined
-            ? Array.from({ length: 10 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell colSpan={4}>
-                    <Skeleton className="h-8 w-full" />
-                  </TableCell>
-                </TableRow>
-              ))
-            : participants.map((participant, i) => {
-                const { id, profiles, created_at } = participant;
+          {participants === undefined ? (
+            Array.from({ length: 10 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell colSpan={is_owner ? 4 : 3}>
+                  <Skeleton className="h-8 w-full" />
+                </TableCell>
+              </TableRow>
+            ))
+          ) : participants.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={is_owner ? 4 : 3}>
+                <div className="flex h-28 w-full items-center justify-center">
+                  <p className="text-muted-foreground">No participant exists</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            participants.map((participant, i) => {
+              const { id, profiles, created_at } = participant;
 
-                return (
-                  <TableRow key={id}>
-                    <TableCell className="font-medium">{i + 1}</TableCell>
+              return (
+                <TableRow key={id}>
+                  <TableCell className="font-medium">{i + 1}</TableCell>
+                  <TableCell>
+                    <div className="inline-flex items-center gap-2">
+                      <Avatar>
+                        <AvatarImage src={profiles.avatar ?? undefined} />
+                        <AvatarFallback>
+                          {profiles.full_name
+                            .split(" ")
+                            .map((c) => c[0].toUpperCase())
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <p>{profiles.full_name}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {format(created_at, "PP p")}
+                  </TableCell>
+                  {is_owner && (
                     <TableCell>
-                      <div className="inline-flex items-center gap-2">
-                        <Avatar>
-                          <AvatarImage src={profiles.avatar ?? undefined} />
-                          <AvatarFallback>
-                            {profiles.full_name
-                              .split(" ")
-                              .map((c) => c[0].toUpperCase())
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <p>{profiles.full_name}</p>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => setRemoveData(participant)}
+                        >
+                          Remove
+                        </Button>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
-                      {format(created_at, "PP p")}
-                    </TableCell>
-                    {is_owner && (
-                      <TableCell>
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => setRemoveData(participant)}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                );
-              })}
+                  )}
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
 

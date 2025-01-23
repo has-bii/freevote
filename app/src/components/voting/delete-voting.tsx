@@ -13,12 +13,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Loader, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function DeleteVoting() {
   const { data, close } = useDeleteVoting();
   const [loading, setLoading] = React.useState<boolean>(false);
   const supabase = useSupabase();
   const query = useQueryClient();
+  const router = useRouter();
 
   const deleteHandler = React.useCallback(async () => {
     if (!data) return;
@@ -36,7 +38,8 @@ export default function DeleteVoting() {
     setLoading(false);
     close();
     query.invalidateQueries({ queryKey: ["votings"] });
-  }, [close, data, query, supabase]);
+    router.push("/votings");
+  }, [close, data, query, router, supabase]);
 
   return (
     <Dialog open={data !== null} onOpenChange={close}>

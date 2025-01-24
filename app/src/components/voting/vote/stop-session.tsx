@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { TVoting } from "@/types/model";
 import { TSupabaseClient } from "@/utils/supabase/server";
 import { QueryClient } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
+import { CirclePause, Loader } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
@@ -34,13 +34,9 @@ export default function StopSession({ id, query, supabase }: Props) {
   };
 
   return (
-    <Button
-      size="sm"
-      variant="destructive"
-      onClick={stopHandler}
-      disabled={loading}
-    >
-      Stop session {loading && <Loader className="animate-spin" />}
+    <Button variant="destructive" onClick={stopHandler} disabled={loading}>
+      <CirclePause /> Stop session
+      {loading && <Loader className="animate-spin" />}
     </Button>
   );
 }

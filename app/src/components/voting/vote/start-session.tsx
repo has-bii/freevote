@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format, setHours, setMinutes } from "date-fns";
-import { CalendarIcon, Loader, Timer } from "lucide-react";
+import { CalendarIcon, Loader, PlayIcon, Timer } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { TSupabaseClient } from "@/utils/supabase/server";
@@ -99,7 +99,9 @@ export default function StartSession({ data, ...rest }: Props) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm">Start session</Button>
+        <Button>
+          <PlayIcon /> Start session
+        </Button>
       </PopoverTrigger>
       <PopoverContent>
         <Form {...form}>

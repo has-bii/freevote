@@ -6,7 +6,7 @@ import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { useSupabase } from "@/utils/supabase/client";
 import { Loader } from "lucide-react";
 import React from "react";
-import OwnerHandlers from "./owner-handlers";
+import AddNewSession from "@/components/voting/session/add-new-session";
 
 type Props = {
   voting_id: string;
@@ -23,7 +23,7 @@ export default function VotePage({ voting_id }: Props) {
       <div className="p-4 pt-0">
         {user.id === votingData.user_id && (
           <div className="flex items-center justify-end gap-2">
-            <OwnerHandlers choices={choices} data={votingData} />
+            <AddNewSession data={votingData} />
           </div>
         )}
       </div>

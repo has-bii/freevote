@@ -71,6 +71,47 @@ export type Database = {
         }
         Relationships: []
       }
+      sessions: {
+        Row: {
+          choices: string[]
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          session_end_at: string | null
+          session_start_at: string | null
+          voting_id: string
+        }
+        Insert: {
+          choices?: string[]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          session_end_at?: string | null
+          session_start_at?: string | null
+          voting_id: string
+        }
+        Update: {
+          choices?: string[]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          session_end_at?: string | null
+          session_start_at?: string | null
+          voting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_voting_id_fkey"
+            columns: ["voting_id"]
+            isOneToOne: false
+            referencedRelation: "votings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voters: {
         Row: {
           created_at: string
@@ -111,33 +152,27 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          expired_session: string | null
           icon: string
           id: string
           is_open: boolean
-          is_start: boolean
           name: string
           user_id: string
         }
         Insert: {
           created_at?: string
           description?: string | null
-          expired_session?: string | null
           icon: string
           id?: string
           is_open?: boolean
-          is_start?: boolean
           name: string
           user_id?: string
         }
         Update: {
           created_at?: string
           description?: string | null
-          expired_session?: string | null
           icon?: string
           id?: string
           is_open?: boolean
-          is_start?: boolean
           name?: string
           user_id?: string
         }
@@ -156,7 +191,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      end_expired_voting_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       voting_type: "voting" | "nomination"

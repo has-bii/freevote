@@ -22,9 +22,7 @@ export default function OwnerHandlers({ choices, data }: Props) {
       {data.is_start ? (
         <StopSession query={query} supabase={supabase} id={data.id} />
       ) : choices.length === 0 ? (
-        <Button size="sm" disabled>
-          No choice exists
-        </Button>
+        <Button disabled>No choice exists</Button>
       ) : (
         <StartSession data={data} supabase={supabase} query={query} />
       )}

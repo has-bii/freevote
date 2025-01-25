@@ -78,8 +78,8 @@ export type Database = {
           description: string | null
           id: string
           name: string
-          session_end_at: string | null
-          session_start_at: string | null
+          session_end_at: string
+          session_start_at: string
           voting_id: string
         }
         Insert: {
@@ -88,8 +88,8 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
-          session_end_at?: string | null
-          session_start_at?: string | null
+          session_end_at: string
+          session_start_at: string
           voting_id: string
         }
         Update: {
@@ -98,8 +98,8 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
-          session_end_at?: string | null
-          session_start_at?: string | null
+          session_end_at?: string
+          session_start_at?: string
           voting_id?: string
         }
         Relationships: [

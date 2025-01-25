@@ -4,8 +4,8 @@ create table sessions (
     name text not null,
     description text,
     choices UUID array default ARRAY[]::UUID[] not null,
-    session_start_at timestamp with time zone,
-    session_end_at timestamp with time zone,
+    session_start_at timestamp with time zone not null,
+    session_end_at timestamp with time zone not null,
     created_at timestamp with time zone default now() not null
 );
 

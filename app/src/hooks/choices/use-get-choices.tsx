@@ -19,3 +19,21 @@ export const useGetChoices = (supabase: TSupabaseClient, voting_id: string) =>
       return data;
     },
   });
+
+export const useGetChoicesIn = (supabase: TSupabaseClient, choices: string[]) =>
+  useQuery({
+    queryKey: ["choices", choices],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("choices")
+        .select("*")
+        .in("id", choices);
+
+      if (error) {
+        toast.error("Failed to get choices");
+        throw new Error("Failed to get choices");
+      }
+
+      return data;
+    },
+  });

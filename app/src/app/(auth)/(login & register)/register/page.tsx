@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import filterSearchParams from "@/utils/filter-search-params";
 import { signup } from "./actions";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -32,7 +32,7 @@ export default async function RegisterPage({ searchParams }: Props) {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold">Get started</h1>
-          <p className="text-muted-foreground text-balance">
+          <p className="text-balance text-muted-foreground">
             Create your account now
           </p>
         </div>
@@ -47,7 +47,7 @@ export default async function RegisterPage({ searchParams }: Props) {
           />
           <span
             className={cn(
-              "text-destructive text-sm",
+              "text-sm text-destructive",
               typeof nameError === "undefined" ? "hidden" : "",
             )}
           >
@@ -65,7 +65,7 @@ export default async function RegisterPage({ searchParams }: Props) {
           />
           <span
             className={cn(
-              "text-destructive text-sm",
+              "text-sm text-destructive",
               typeof emailError === "undefined" ? "hidden" : "",
             )}
           >
@@ -77,7 +77,7 @@ export default async function RegisterPage({ searchParams }: Props) {
           <Input id="password" name="password" type="password" required />
           <span
             className={cn(
-              "text-destructive text-sm",
+              "text-sm text-destructive",
               typeof passwordError === "undefined" ? "hidden" : "",
             )}
           >
@@ -85,7 +85,7 @@ export default async function RegisterPage({ searchParams }: Props) {
           </span>
           <span
             className={cn(
-              "text-destructive text-sm",
+              "text-sm text-destructive",
               typeof error === "undefined" ? "hidden" : "",
             )}
           >

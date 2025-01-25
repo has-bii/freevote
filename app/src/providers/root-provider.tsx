@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import QueryProvider from "./query-provider";
 import { Toaster } from "@/components/ui/sonner";

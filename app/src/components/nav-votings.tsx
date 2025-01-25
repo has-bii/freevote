@@ -20,9 +20,10 @@ import {
 } from "@/components/ui/sidebar";
 import { useSupabase } from "@/utils/supabase/client";
 import { useGetVotings } from "@/hooks/votings/use-get-votings";
-import Link from "next/link";
+
 import AddVoting from "./voting/add-voting";
 import { useDeleteVoting } from "../hooks/votings/use-modal-delete-voting";
+import { Link } from "react-transition-progress/next";
 
 export function NavVotings() {
   const { isMobile } = useSidebar();

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import { useSupabase } from "@/utils/supabase/client";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";

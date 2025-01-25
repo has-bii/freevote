@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowLeft, CheckIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import Name from "./name";

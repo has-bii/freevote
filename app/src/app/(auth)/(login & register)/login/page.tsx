@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { login } from "@/app/(auth)/(login & register)/login/actions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -21,7 +21,7 @@ export default async function LoginPage({ searchParams }: Props) {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="text-muted-foreground text-balance">
+          <p className="text-balance text-muted-foreground">
             Login to your account
           </p>
         </div>
@@ -48,7 +48,7 @@ export default async function LoginPage({ searchParams }: Props) {
           <Input id="password" name="password" type="password" required />
           <span
             className={cn(
-              "text-destructive text-sm",
+              "text-sm text-destructive",
               typeof error === "undefined" ? "hidden" : "",
             )}
           >
@@ -58,8 +58,8 @@ export default async function LoginPage({ searchParams }: Props) {
         <Button type="submit" formAction={login} className="w-full">
           Login
         </Button>
-        <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-          <span className="text-muted-foreground relative z-10 bg-background px-2">
+        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+          <span className="relative z-10 bg-background px-2 text-muted-foreground">
             Or continue with
           </span>
         </div>

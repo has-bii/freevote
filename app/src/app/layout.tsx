@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "react-image-crop/dist/ReactCrop.css";
 import RootProvider from "@/providers/root-provider";
+import { ProgressBar, ProgressBarProvider } from "react-transition-progress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <RootProvider>{children}</RootProvider>
+        <ProgressBarProvider>
+          <ProgressBar className="fixed top-0 z-50 h-1 bg-black" />
+          <RootProvider>{children}</RootProvider>
+        </ProgressBarProvider>
       </body>
     </html>
   );

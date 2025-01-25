@@ -19,7 +19,7 @@ import {
 import { useSupabase } from "@/utils/supabase/client";
 import { useGetAuth } from "@/hooks/auth/use-auth";
 import Logo from "@/components/logo";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import { usePathname } from "next/navigation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

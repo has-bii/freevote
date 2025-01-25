@@ -37,7 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/"}>
-                <Link href="/">
+                <Link href="/" className="truncate">
                   <HomeIcon />
                   Getting Started
                 </Link>
@@ -45,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/votings"}>
-                <Link href="/votings">
+                <Link href="/votings" className="truncate">
                   <VoteIcon />
                   My Votings
                 </Link>

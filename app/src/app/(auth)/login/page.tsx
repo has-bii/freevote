@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login } from "@/app/(auth)/(login & register)/login/actions";
+import { login } from "@/app/(auth)/login/actions";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-transition-progress/next";
 import { useActionState, useEffect } from "react";

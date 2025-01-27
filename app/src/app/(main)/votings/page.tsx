@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import AddVoting from "@/components/voting/add-voting";
+import AddVoting from "@/components/add-voting";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAuth } from "@/hooks/auth/use-auth";

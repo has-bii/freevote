@@ -21,7 +21,7 @@ import {
 import { useSupabase } from "@/utils/supabase/client";
 import { useGetVotings } from "@/hooks/votings/use-get-votings";
 
-import AddVoting from "./voting/add-voting";
+import AddVoting from "./add-voting";
 import { useDeleteVoting } from "../hooks/votings/use-modal-delete-voting";
 import { Link } from "react-transition-progress/next";
 
@@ -33,7 +33,7 @@ export function NavVotings() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Votings/Awards</SidebarGroupLabel>
+      <SidebarGroupLabel>Votings</SidebarGroupLabel>
       <SidebarMenu>
         {votings === undefined
           ? ""

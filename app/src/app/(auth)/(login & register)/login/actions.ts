@@ -4,8 +4,26 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
+import { z } from "zod";
 
-export async function login(formData: FormData) {
+const FormSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "Min. 8 characters!"),
+});
+
+export type LoginActionInitState = {
+  error?: string;
+  input?: {
+    email?: string;
+  };
+};
+
+export async function login(
+  _: LoginActionInitState | null,
+  formData: FormData,
+): Promise<LoginActionInitState> {
+  await new Promise((res) => setTimeout(res, 10000));
+
   const supabase = await createClient();
 
   // type-casting here for convenience
@@ -15,12 +33,23 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: parsedData, error } = FormSchema.safeParse(data);
 
-  if (error) {
-    const url = new URL("/login", process.env.NEXT_PUBLIC_APP_URL);
-    url.searchParams.set("error", error.message);
-    redirect(url.toString());
+  if (error)
+    return {
+      error: "Invalid input!",
+    };
+
+  const { error: loginError } =
+    await supabase.auth.signInWithPassword(parsedData);
+
+  if (loginError) {
+    return {
+      error: loginError.message,
+      input: {
+        email: parsedData.email,
+      },
+    };
   }
 
   revalidatePath("/", "layout");

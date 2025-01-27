@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useGetVotings } from "@/hooks/votings/use-get-votings";
 import { useSupabase } from "@/utils/supabase/client";
 import {
   Breadcrumb,
@@ -14,16 +15,19 @@ import AddVoting from "@/components/add-voting";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import JoinVoting from "@/components/voting/join-voting";
-import {
-  useGetJoinedVotings,
-  useGetVotings,
-} from "@/hooks/votings/use-get-votings";
+import { TVoting } from "@/types/model";
 import VotingOverview from "@/components/voting-overview";
 
-export default function Page() {
+type Props = {
+  initialData: {
+    created: TVoting[];
+    joined: TVoting[];
+  };
+};
+
+export default function VotingsPage({ initialData: { created } }: Props) {
   const supabase = useSupabase();
-  const { data: createdVotings } = useGetVotings(supabase);
-  const { data: joinedVotings } = useGetJoinedVotings(supabase);
+  const { data: createdVotings } = useGetVotings(supabase, created);
 
   return (
     <>
@@ -49,45 +53,19 @@ export default function Page() {
           <JoinVoting />
         </div>
 
-        {/* Created */}
-        <div className="mt-6 flex items-center gap-4">
-          <span className="text-lg font-medium">Created</span>
-          <Separator orientation="horizontal" className="flex-1" />
-        </div>
-        <div className="mt-2 grid flex-1 gap-2 lg:grid-cols-5">
+        <div className="mt-6 grid flex-1 gap-2 lg:grid-cols-5">
           {createdVotings === undefined ? (
-            Array.from({ length: 5 }).map((_, i) => (
+            Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-28 w-full" />
             ))
           ) : createdVotings.length === 0 ? (
             <div className="flex h-28 items-center justify-center rounded-lg border lg:col-span-5">
-              <p className="text-sm text-muted-foreground">
-                You don&apos;t have created votings.
+              <p className="text-muted-foreground">
+                You don&apos;t have any active voting or joined votes.
               </p>
             </div>
           ) : (
             createdVotings.map((d) => <VotingOverview key={d.id} data={d} />)
-          )}
-        </div>
-
-        {/* Joined */}
-        <div className="mt-6 flex items-center gap-4">
-          <span className="text-lg font-medium">Joined</span>
-          <Separator orientation="horizontal" className="flex-1" />
-        </div>
-        <div className="mt-2 grid flex-1 gap-2 lg:grid-cols-5">
-          {joinedVotings === undefined ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full" />
-            ))
-          ) : joinedVotings.length === 0 ? (
-            <div className="flex h-28 items-center justify-center rounded-lg border lg:col-span-5">
-              <p className="text-sm text-muted-foreground">
-                You don&apos;t have joined votings.
-              </p>
-            </div>
-          ) : (
-            joinedVotings.map((d) => <VotingOverview key={d.id} data={d} />)
           )}
         </div>
       </div>

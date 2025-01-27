@@ -1,11 +1,15 @@
+import { TVoting } from "@/types/model";
 import { TSupabaseClient } from "@/utils/supabase/server";
 import { useQuery } from "@tanstack/react-query";
-import { compareDesc } from "date-fns";
 import { toast } from "sonner";
 
-export const useGetVotings = (supabase: TSupabaseClient) =>
+export const useGetVotings = (
+  supabase: TSupabaseClient,
+  initialData?: TVoting[],
+) =>
   useQuery({
     queryKey: ["votings"],
+    initialData,
     queryFn: async () => {
       const {
         data: { user },
@@ -50,9 +54,9 @@ export const useGetVotingById = (supabase: TSupabaseClient, id: string) =>
     },
   });
 
-export const useGetJoinedVotes = (supabase: TSupabaseClient) =>
+export const useGetJoinedVotings = (supabase: TSupabaseClient) =>
   useQuery({
-    queryKey: ["all votes"],
+    queryKey: ["joined votings"],
     queryFn: async () => {
       const {
         data: { user },
@@ -63,29 +67,13 @@ export const useGetJoinedVotes = (supabase: TSupabaseClient) =>
         throw new Error("User is not authenticated");
       }
 
-      const { data: votings, error: errorVoting } = await supabase
-        .from("votings")
-        .select("*,profiles!inner(full_name,avatar)")
+      const { data, error } = await supabase
+        .from("voters")
+        .select("*,votings(*)")
         .eq("user_id", user.id);
 
-      if (errorVoting) {
-        toast.error("Failed to get votings data");
-        throw new Error("Failed to get votings data");
-      }
+      if (error) throw new Error(error.message);
 
-      const { data: joinedVotes, error: joinedVotesError } = await supabase
-        .from("voters")
-        .select("*,votings!inner(*,profiles!inner(full_name,avatar))");
-
-      if (joinedVotesError) {
-        toast.error("Failed to get joined votes data");
-        throw new Error("Failed to get joined votes data");
-      }
-
-      const temp = [...votings, ...joinedVotes.map((d) => d.votings)];
-
-      temp.sort((a, b) => compareDesc(a.created_at, b.created_at));
-
-      return temp;
+      return data.map((d) => d.votings);
     },
   });

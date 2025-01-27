@@ -12,7 +12,20 @@ const signupSchema = z.object({
   password: password,
 });
 
-export async function signup(formData: FormData) {
+type Response = {
+  error?: {
+    full_name?: string[];
+    email?: string[];
+    password?: string[];
+  };
+  input?: {
+    full_name?: string;
+    email?: string;
+    password?: string;
+  };
+};
+
+export async function signup(_: Response | null, formData: FormData) {
   const supabase = await createClient();
 
   // type-casting here for convenience
@@ -25,17 +38,10 @@ export async function signup(formData: FormData) {
 
   const { data: parsedData, error } = signupSchema.safeParse(data);
 
-  if (error) {
-    const url = new URL("/register", process.env.NEXT_PUBLIC_APP_URL);
-
-    error.errors.forEach((er) => {
-      er.path.forEach((p) => {
-        url.searchParams.set(p.toString(), er.message);
-      });
-    });
-
-    redirect(url.toString());
-  }
+  if (error)
+    return {
+      error: error.flatten().fieldErrors,
+    };
 
   const { error: errorSignUp } = await supabase.auth.signUp({
     email: parsedData.email,

@@ -22,8 +22,6 @@ export async function login(
   _: LoginActionInitState | null,
   formData: FormData,
 ): Promise<LoginActionInitState> {
-  await new Promise((res) => setTimeout(res, 10000));
-
   const supabase = await createClient();
 
   // type-casting here for convenience

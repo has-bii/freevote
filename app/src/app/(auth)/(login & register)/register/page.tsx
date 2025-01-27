@@ -1,34 +1,19 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import filterSearchParams from "@/utils/filter-search-params";
 import { signup } from "./actions";
 import { Link } from "react-transition-progress/next";
+import { useActionState } from "react";
+import { Loader } from "lucide-react";
 
-type Props = {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
-
-export default async function RegisterPage({ searchParams }: Props) {
-  const params = await searchParams;
-
-  const nameError = filterSearchParams<string | undefined>(
-    params.full_name,
-    "string",
-  );
-  const emailError = filterSearchParams<string | undefined>(
-    params.email,
-    "string",
-  );
-  const passwordError = filterSearchParams<string | undefined>(
-    params.password,
-    "string",
-  );
-  const error = filterSearchParams<string | undefined>(params.error, "string");
+export default function RegisterPage() {
+  const [state, formAction, isPending] = useActionState(signup, null);
 
   return (
-    <form className="p-6 md:p-8">
+    <form action={formAction} className="p-6 md:p-8">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold">Get started</h1>
@@ -45,14 +30,11 @@ export default async function RegisterPage({ searchParams }: Props) {
             placeholder="Hasbiy Robbiy"
             required
           />
-          <span
-            className={cn(
-              "text-sm text-destructive",
-              typeof nameError === "undefined" ? "hidden" : "",
-            )}
-          >
-            {nameError}
-          </span>
+          {state?.error.full_name && (
+            <span className="text-sm text-destructive">
+              {state.error.full_name[0]}
+            </span>
+          )}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
@@ -63,37 +45,23 @@ export default async function RegisterPage({ searchParams }: Props) {
             placeholder="m@example.com"
             required
           />
-          <span
-            className={cn(
-              "text-sm text-destructive",
-              typeof emailError === "undefined" ? "hidden" : "",
-            )}
-          >
-            {emailError}
-          </span>
+          {state?.error.email && (
+            <span className="text-sm text-destructive">
+              {state.error.email[0]}
+            </span>
+          )}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
           <Input id="password" name="password" type="password" required />
-          <span
-            className={cn(
-              "text-sm text-destructive",
-              typeof passwordError === "undefined" ? "hidden" : "",
-            )}
-          >
-            {passwordError}
-          </span>
-          <span
-            className={cn(
-              "text-sm text-destructive",
-              typeof error === "undefined" ? "hidden" : "",
-            )}
-          >
-            {error}
-          </span>
+          {state?.error.password && (
+            <span className="text-sm text-destructive">
+              {state.error.password[0]}
+            </span>
+          )}
         </div>
-        <Button type="submit" formAction={signup} className="w-full">
-          Register
+        <Button type="submit" className="w-full" disabled={isPending}>
+          Register {isPending && <Loader className="animate-spin" />}
         </Button>
         <div className="text-center text-sm">
           Already have an account?&nbsp;

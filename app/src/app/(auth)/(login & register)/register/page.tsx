@@ -3,14 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { signup } from "./actions";
 import { Link } from "react-transition-progress/next";
 import { useActionState } from "react";
 import { Loader } from "lucide-react";
+import React from "react";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [state, formAction, isPending] = useActionState(signup, null);
+
+  React.useEffect(() => {
+    if (state?.message) {
+      if (state.success) toast.success(state.message);
+      else toast.error(state.message);
+    }
+  }, [state]);
 
   return (
     <form action={formAction} className="p-6 md:p-8">
@@ -29,8 +37,9 @@ export default function RegisterPage() {
             type="text"
             placeholder="Hasbiy Robbiy"
             required
+            defaultValue={state?.input?.full_name}
           />
-          {state?.error.full_name && (
+          {state?.error?.full_name && (
             <span className="text-sm text-destructive">
               {state.error.full_name[0]}
             </span>
@@ -44,8 +53,9 @@ export default function RegisterPage() {
             type="email"
             placeholder="m@example.com"
             required
+            defaultValue={state?.input?.email}
           />
-          {state?.error.email && (
+          {state?.error?.email && (
             <span className="text-sm text-destructive">
               {state.error.email[0]}
             </span>
@@ -53,8 +63,14 @@ export default function RegisterPage() {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" name="password" type="password" required />
-          {state?.error.password && (
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            required
+            defaultValue={state?.input?.password}
+          />
+          {state?.error?.password && (
             <span className="text-sm text-destructive">
               {state.error.password[0]}
             </span>

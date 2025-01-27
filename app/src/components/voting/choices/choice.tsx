@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 import { Link2, Pencil, Trash2 } from "lucide-react";
 import EditChoice from "./edit-choice";
 import RemoveChoice from "./remove-choice";

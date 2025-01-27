@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signup } from "./actions";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 import { useActionState } from "react";
 import { Loader } from "lucide-react";
 import React from "react";

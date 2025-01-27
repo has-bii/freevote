@@ -1,7 +1,7 @@
 "use client";
 
 import { Sparkles, Users, Vote } from "lucide-react";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { Button } from "../ui/button";

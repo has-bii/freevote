@@ -1,4 +1,4 @@
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 import React from "react";
 import { Vote } from "lucide-react";
 import {

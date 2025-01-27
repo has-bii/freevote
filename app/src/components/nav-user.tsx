@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { logout } from "@/app/(api)/logout/logout";
 import { User } from "@supabase/supabase-js";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 
 export function NavUser({ user }: { user?: User | null }) {
   const { isMobile } = useSidebar();

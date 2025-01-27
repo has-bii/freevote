@@ -23,7 +23,7 @@ import { useGetVotings } from "@/hooks/votings/use-get-votings";
 
 import AddVoting from "./add-voting";
 import { useDeleteVoting } from "../hooks/votings/use-modal-delete-voting";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 
 export function NavVotings() {
   const { isMobile } = useSidebar();

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/app/(auth)/login/actions";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -38,6 +38,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Loader, Plus } from "lucide-react";
 import { useSupabase } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 type Props = {
   children: React.ReactNode;
@@ -53,6 +54,7 @@ export default function AddVoting({ children }: Props) {
   const [open, setOpen] = React.useState<boolean>(false);
   const query = useQueryClient();
   const supabase = useSupabase();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -63,25 +65,26 @@ export default function AddVoting({ children }: Props) {
     },
   });
 
-  const onSubmit = useCallback(
-    async (payload: z.infer<typeof FormSchema>) => {
-      try {
-        const { error } = await supabase.from("votings").insert(payload);
+  const onSubmit = async (payload: z.infer<typeof FormSchema>) => {
+    try {
+      const { error, data } = await supabase
+        .from("votings")
+        .insert(payload)
+        .select("*")
+        .single();
 
-        if (error) {
-          toast.error("Failed to add new voting");
-          return;
-        }
-
-        query.invalidateQueries({ queryKey: ["votings"] });
-        setOpen(false);
-      } catch (error) {
-        if (error instanceof Error) toast.error(error.message);
-        else toast.error("Unexpected error has occurred!");
+      if (error) {
+        toast.error("Failed to add new voting");
+        return;
       }
-    },
-    [query, supabase],
-  );
+
+      query.invalidateQueries({ queryKey: ["votings"] });
+      router.push(`/votings/${data.id}`);
+    } catch (error) {
+      if (error instanceof Error) toast.error(error.message);
+      else toast.error("Unexpected error has occurred!");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -121,7 +124,6 @@ export default function AddVoting({ children }: Props) {
                   <FormControl>
                     <Textarea
                       placeholder="Tell us about the voting"
-                      className="resize-none"
                       {...field}
                     />
                   </FormControl>

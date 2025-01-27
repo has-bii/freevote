@@ -18,7 +18,7 @@ import { useGetAuth } from "@/hooks/auth/use-auth";
 import { Badge } from "@/components/ui/badge";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { format } from "date-fns";
-import { Link } from "react-transition-progress/next";
+import Link from "next/link";
 import JoinVoting from "@/components/voting/join-voting";
 
 export default function Page() {

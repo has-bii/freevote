@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
+import GiveVote from "./give-vote";
 
 type Props = {
   data: TSession;
@@ -81,14 +82,21 @@ export default function Session({ data, is_owner, choices }: Props) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{data.name}</CardTitle>
-          {is_owner && (
-            <DeleteSession id={data.id} supabase={supabase} query={query}>
-              <Button size="sm" variant="destructive">
-                <Trash2 />
-                Delete
-              </Button>
-            </DeleteSession>
-          )}
+          <div className="inline-flex gap-2">
+            <GiveVote
+              choices={filteredChoices}
+              name={data.name}
+              description={data.description}
+            />
+            {is_owner && (
+              <DeleteSession id={data.id} supabase={supabase} query={query}>
+                <Button size="sm" variant="destructive">
+                  <Trash2 />
+                  Delete
+                </Button>
+              </DeleteSession>
+            )}
+          </div>
         </div>
         <CardDescription>{data.description}</CardDescription>
       </CardHeader>

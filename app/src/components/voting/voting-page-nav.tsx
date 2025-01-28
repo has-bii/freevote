@@ -14,24 +14,27 @@ type Props = {
   user: User;
 };
 
+const initNav = [
+  {
+    name: "vote",
+    icon: Vote,
+  },
+  {
+    name: "choices",
+    icon: Sparkles,
+  },
+];
+
 export default function VotingPageNav({
   id,
   owner_id,
   participants,
   user,
 }: Props) {
-  const [navs, setNavs] = React.useState<
-    Array<{ name: string; icon: LucideIcon; data?: string }>
-  >([
-    {
-      name: "vote",
-      icon: Vote,
-    },
-    {
-      name: "choices",
-      icon: Sparkles,
-    },
-  ]);
+  const [navs, setNavs] =
+    React.useState<Array<{ name: string; icon: LucideIcon; data?: string }>>(
+      initNav,
+    );
   const pathname = usePathname();
 
   React.useEffect(() => {

@@ -18,7 +18,11 @@ export default function Logo() {
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
           <Link href="/">
-            <Image alt="logo" src={logoImg} />
+            <Image
+              alt="logo"
+              src={logoImg}
+              className="rounded-lg bg-black p-1"
+            />
             <span className="font-semibold">Quick Vote</span>
           </Link>
         </SidebarMenuButton>

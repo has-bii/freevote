@@ -16,19 +16,21 @@ import VotingDropdown from "@/components/voting/voting-dropdown";
 import VotingPageNav from "@/components/voting/voting-page-nav";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import DynamicIconn from "../dynamic-icon";
+import DynamicIconn from "../../dynamic-icon";
 
 type Props = {
-  id: string;
+  params: Promise<{ voting_id: string }>;
 };
 
-export default async function HeaderVotePage({ id }: Props) {
+export default async function HeaderVotePage({ params }: Props) {
+  const { voting_id } = await params;
+
   const supabase = await createClient();
 
   const fetchVoting = supabase
     .from("votings")
     .select("*")
-    .eq("id", id)
+    .eq("id", voting_id)
     .single();
 
   const fetchUser = supabase.auth.getUser();
@@ -36,7 +38,7 @@ export default async function HeaderVotePage({ id }: Props) {
   const fetchParticipant = supabase
     .from("voters")
     .select("*")
-    .eq("voting_id", id);
+    .eq("voting_id", voting_id);
 
   const [
     { data: votingData, error: er1 },
@@ -83,7 +85,7 @@ export default async function HeaderVotePage({ id }: Props) {
               />
             </div>
           )}
-          <div className="5 space-y-1">
+          <div className="space-y-1">
             <p
               className="line-clamp-2 text-xl font-bold"
               title={votingData.name}
@@ -117,7 +119,7 @@ export default async function HeaderVotePage({ id }: Props) {
         <React.Suspense>
           <div className="mt-4">
             <VotingPageNav
-              id={id}
+              id={voting_id}
               owner_id={votingData.user_id}
               participants={participants.length}
               user={user!}

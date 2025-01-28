@@ -10,12 +10,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { format, intlFormatDistance, isPast } from "date-fns";
+import {
+  differenceInSeconds,
+  format,
+  intlFormatDistance,
+  isPast,
+} from "date-fns";
 import { useSupabase } from "@/utils/supabase/client";
 import DeleteSession from "./delete-session";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Progress } from "@/components/ui/progress";
 
 type Props = {
   data: TSession;
@@ -26,6 +32,7 @@ type Props = {
 export default function Session({ data, is_owner, choices }: Props) {
   const supabase = useSupabase();
   const query = useQueryClient();
+  const [progress, setProgress] = React.useState(0);
 
   const isStart = isPast(data.session_start_at);
   const isEnd = isPast(data.session_end_at);
@@ -37,7 +44,37 @@ export default function Session({ data, is_owner, choices }: Props) {
         ? `Starts ${intlFormatDistance(data.session_start_at, new Date())}`
         : `Ended ${intlFormatDistance(data.session_end_at, new Date())}`;
 
-  const filteredChoices = choices.filter((c) => data.choices.includes(c.id));
+  const filteredChoices = React.useMemo(
+    () => choices.filter((c) => data.choices.includes(c.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  React.useEffect(() => {
+    const change = () => {
+      if (!isEnd) {
+        const now = new Date();
+        const diff = differenceInSeconds(
+          isStart ? data.session_end_at : data.session_start_at,
+          isStart ? data.session_start_at : data.created_at,
+        );
+        const diffFromNow = differenceInSeconds(
+          isStart ? data.session_end_at : data.session_start_at,
+          now,
+        );
+
+        const result = (diffFromNow / diff) * 100;
+
+        if (result >= 100) setProgress(100);
+        else setProgress(result);
+      }
+    };
+
+    setInterval(() => {
+      change();
+    }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Card>
@@ -89,12 +126,13 @@ export default function Session({ data, is_owner, choices }: Props) {
           </div>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="gap-4">
         {countDown && (
-          <p className="truncate text-nowrap text-sm text-muted-foreground">
+          <p className="shrink-0 truncate text-nowrap text-sm text-muted-foreground">
             {countDown}
           </p>
         )}
+        {!isEnd && <Progress value={progress} />}
       </CardFooter>
     </Card>
   );

@@ -1,11 +1,12 @@
 import Link from "next/link";
 import React from "react";
-import { Vote } from "lucide-react";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import logoImg from "@/app/icon_black.png";
+import Image from "next/image";
 
 export default function Logo() {
   return (
@@ -17,9 +18,7 @@ export default function Logo() {
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
           <Link href="/">
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              <Vote className="size-4" />
-            </div>
+            <Image alt="logo" src={logoImg} />
             <span className="font-semibold">Quick Vote</span>
           </Link>
         </SidebarMenuButton>

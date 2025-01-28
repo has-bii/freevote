@@ -48,7 +48,7 @@ export default async function HeaderVotePage({ id }: Props) {
 
   if (er1 || er2) redirect("/votings");
 
-  const isParticipant = participants?.find((p) => p.user_id === user?.id);
+  const isParticipant = participants.find((p) => p.user_id === user?.id);
   const isOwner = votingData.user_id === user?.id;
 
   return (
@@ -116,7 +116,12 @@ export default async function HeaderVotePage({ id }: Props) {
 
         <React.Suspense>
           <div className="mt-4">
-            <VotingPageNav id={id} owner_id={votingData.user_id} />
+            <VotingPageNav
+              id={id}
+              owner_id={votingData.user_id}
+              participants={participants.length}
+              user={user!}
+            />
           </div>
         </React.Suspense>
       </div>

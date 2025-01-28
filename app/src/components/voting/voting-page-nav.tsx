@@ -5,17 +5,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { Button } from "../ui/button";
-import { useSupabase } from "@/utils/supabase/client";
-import { useGetAuth } from "@/hooks/auth/use-auth";
+import { User } from "@supabase/supabase-js";
 
 type Props = {
   id: string;
   owner_id: string;
+  participants: number;
+  user: User;
 };
 
-export default function VotingPageNav({ id, owner_id }: Props) {
+export default function VotingPageNav({
+  id,
+  owner_id,
+  participants,
+  user,
+}: Props) {
   const [navs, setNavs] = React.useState<
-    Array<{ name: string; icon: LucideIcon }>
+    Array<{ name: string; icon: LucideIcon; data?: string }>
   >([
     {
       name: "vote",
@@ -27,8 +33,6 @@ export default function VotingPageNav({ id, owner_id }: Props) {
     },
   ]);
   const pathname = usePathname();
-  const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
 
   React.useEffect(() => {
     if (user && user.id === owner_id)
@@ -40,13 +44,15 @@ export default function VotingPageNav({ id, owner_id }: Props) {
         {
           name: "participants",
           icon: Users,
+          data: participants.toString(),
         },
         {
           name: "choices",
           icon: Sparkles,
         },
       ]);
-  }, [owner_id, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <nav className="flex max-w-full flex-nowrap items-center gap-2 overflow-hidden overflow-x-auto border-b pb-2">
@@ -61,6 +67,11 @@ export default function VotingPageNav({ id, owner_id }: Props) {
           <Link href={`/votings/${id}/${nav.name}`} className="capitalize">
             <nav.icon />
             {nav.name}
+            {nav.data && (
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 p-1 text-xs text-white">
+                {nav.data}
+              </span>
+            )}
           </Link>
         </Button>
       ))}

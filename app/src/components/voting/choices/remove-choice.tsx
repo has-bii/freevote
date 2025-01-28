@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Loader, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { TChoice } from "@/types/model";
+import { revalidateChoice } from "./revalidate-choice";
 
 type Props = {
   children: React.ReactNode;
@@ -35,7 +36,10 @@ export default function RemoveChoice({ children, data }: Props) {
       return;
     }
 
-    query.invalidateQueries({ queryKey: ["choices", data.voting_id] });
+    query.setQueryData<TChoice[]>(["choices", data.voting_id], (prev) =>
+      prev ? prev.filter((p) => p.id !== data.id) : undefined,
+    );
+    revalidateChoice(data.voting_id);
     setOpen(false);
   };
 

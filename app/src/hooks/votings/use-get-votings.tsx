@@ -35,9 +35,20 @@ export const useGetVotings = (
     },
   });
 
-export const useGetVotingById = (supabase: TSupabaseClient, id: string) =>
+type UseGetVotingByIdParams = {
+  supabase: TSupabaseClient;
+  id: string;
+  initialData: TVoting;
+};
+
+export const useGetVotingById = ({
+  id,
+  initialData,
+  supabase,
+}: UseGetVotingByIdParams) =>
   useQuery({
     queryKey: ["voting", id],
+    initialData,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("votings")

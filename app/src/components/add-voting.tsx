@@ -79,6 +79,8 @@ export default function AddVoting({ children }: Props) {
       }
 
       query.invalidateQueries({ queryKey: ["votings"] });
+      setOpen(false);
+      form.reset();
       router.push(`/votings/${data.id}`);
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);

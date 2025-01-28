@@ -5,6 +5,7 @@ import { TSession } from "@/types/model";
 import { createClient } from "@/utils/supabase/server";
 import { isPast } from "date-fns";
 import { z } from "zod";
+import { revalidateVote } from "./revalidate-vote";
 
 const SessionSchema = z.object({
   voting_id: z.string().uuid("Invalid ID"),
@@ -58,6 +59,7 @@ export const actionAddSession = async (
 
     if (errorInsert) return { data: null, error: errorInsert.message };
 
+    revalidateVote(parsedData.voting_id);
     return { error: null, data: newData };
   } catch (error) {
     console.error("Failed to add new session: ", error);

@@ -1,11 +1,22 @@
-import { TSupabaseClient } from "@/utils/supabase/server";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { actionGetParticipants } from "./action-get-participants";
+import { TParticipant, TProfile } from "@/types/model";
 
-export const useGetParticipants = (supabase: TSupabaseClient, id: string) =>
+type SelectedProfile = Pick<TProfile, "full_name" | "avatar">;
+
+export type UseGetParticipantsParams = {
+  id: string;
+  initialData: Array<TParticipant & { profiles: SelectedProfile }>;
+};
+
+export const useGetParticipants = ({
+  id,
+  initialData,
+}: UseGetParticipantsParams) =>
   useQuery({
     queryKey: ["participants", id],
+    initialData,
     queryFn: async () => {
       const { data, error } = await actionGetParticipants(id);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { TSession } from "@/types/model";
+import { TChoice, TSession } from "@/types/model";
 import React from "react";
 import {
   Card,
@@ -11,9 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { format, intlFormatDistance, isPast } from "date-fns";
-import { useGetChoicesIn } from "@/hooks/choices/use-get-choices";
 import { useSupabase } from "@/utils/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
 import DeleteSession from "./delete-session";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
@@ -22,12 +20,12 @@ import { useQueryClient } from "@tanstack/react-query";
 type Props = {
   data: TSession;
   is_owner: boolean;
+  choices: TChoice[];
 };
 
-export default function Session({ data, is_owner }: Props) {
+export default function Session({ data, is_owner, choices }: Props) {
   const supabase = useSupabase();
   const query = useQueryClient();
-  const { data: choices } = useGetChoicesIn(supabase, data.choices);
 
   const isStart = isPast(data.session_start_at);
   const isEnd = isPast(data.session_end_at);
@@ -38,6 +36,8 @@ export default function Session({ data, is_owner }: Props) {
       : !isStart
         ? `Starts ${intlFormatDistance(data.session_start_at, new Date())}`
         : `Ended ${intlFormatDistance(data.session_end_at, new Date())}`;
+
+  const filteredChoices = choices.filter((c) => data.choices.includes(c.id));
 
   return (
     <Card>
@@ -81,15 +81,11 @@ export default function Session({ data, is_owner }: Props) {
         <div className="space-y-2">
           <div className="text-xs text-muted-foreground">Choices</div>
           <div className="space-y-1">
-            {choices === undefined
-              ? Array.from({ length: 2 }).map((_, i) => (
-                  <Skeleton key={i} className="h-20 w-full" />
-                ))
-              : choices.map((c) => (
-                  <div key={c.id} className="text-sm">
-                    {c.name}
-                  </div>
-                ))}
+            {filteredChoices.map((c) => (
+              <div key={c.id} className="text-sm">
+                {c.name}
+              </div>
+            ))}
           </div>
         </div>
       </CardContent>

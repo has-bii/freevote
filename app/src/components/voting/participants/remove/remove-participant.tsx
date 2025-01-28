@@ -22,10 +22,11 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader } from "lucide-react";
+import { Loader, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { actionRemoveParticipant } from "./action-remove-participant";
+import { revalidateVote } from "@/actions/revalidate-vote";
 
 export type TParticipantRemove = TParticipant & {
   profiles: {
@@ -64,6 +65,7 @@ export default function RemoveParticipant({ close, data, open }: Props) {
     }
 
     toast.success(message);
+    revalidateVote(data.voting_id);
     form.reset();
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
     close();
@@ -112,10 +114,12 @@ export default function RemoveParticipant({ close, data, open }: Props) {
                   form.formState.isSubmitting || !form.formState.isValid
                 }
               >
-                Remove
-                {form.formState.isSubmitting && (
+                {form.formState.isSubmitting ? (
                   <Loader className="animate-spin" />
+                ) : (
+                  <Trash2 />
                 )}
+                Remove
               </Button>
             </div>
           </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { TVoting } from "@/types/model";
+import { TParticipant, TVoting } from "@/types/model";
 import React from "react";
 import {
   DropdownMenu,
@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
+  CirclePlus,
   EllipsisVertical,
   ExternalLink,
+  Loader,
   LogOut,
   SquareCheck,
   SquareX,
@@ -24,24 +26,30 @@ import { toast } from "sonner";
 import { useShareVoting } from "./share/use-share-voting";
 import ShareVoting from "./share/share-voting";
 import { useGetAuth } from "@/hooks/auth/use-auth";
-import { useIsParticipant } from "@/hooks/participants/use-is-participant";
 import LeaveParticipant from "./participants/leave-participant";
 import { useModalLeave } from "@/hooks/use-modal-leave";
 import { joinSession } from "@/actions/join-session";
 import { useDeleteVoting } from "@/hooks/votings/use-modal-delete-voting";
+import { revalidateVote } from "@/actions/revalidate-vote";
 
 type Props = {
   data: TVoting;
+  isParticipant?: TParticipant;
+  isOwner: boolean;
 };
 
-export default function VotingDropdown({ data }: Props) {
+export default function VotingDropdown({
+  data,
+  isOwner,
+  isParticipant,
+}: Props) {
   const query = useQueryClient();
   const supabase = useSupabase();
   const { open: showDelete } = useDeleteVoting();
   const { open: openShare } = useShareVoting();
   const { open: openLeave } = useModalLeave();
   const { data: user } = useGetAuth(supabase);
-  const { data: isParticipant } = useIsParticipant(supabase, data.id);
+  const [loadingJoin, setLoadJoin] = React.useState(false);
 
   const openCloseHandler = async (state: boolean) => {
     const toastId = toast.loading("Loading...", { duration: Infinity });
@@ -58,14 +66,27 @@ export default function VotingDropdown({ data }: Props) {
     } else {
       toast.success(`Voting has been ${state ? "opened" : "closed"}`);
       query.setQueryData<TVoting>(["voting", data.id], () => newData);
+      revalidateVote(data.id);
     }
 
     toast.dismiss(toastId);
   };
 
-  const is_owner = React.useMemo(() => {
-    return user?.id === data.user_id;
-  }, [data.user_id, user?.id]);
+  const joinHandler = async () => {
+    const formData = new FormData();
+    formData.set("id", data.id);
+    setLoadJoin(true);
+    const { error, message } = await joinSession(formData);
+    setLoadJoin(false);
+
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
+    toast.success(message);
+    window.location.reload();
+  };
 
   return (
     <>
@@ -92,16 +113,19 @@ export default function VotingDropdown({ data }: Props) {
               Leave
             </DropdownMenuItem>
           )}
-          {!isParticipant && !is_owner && data.is_open ? (
-            <DropdownMenuItem
-              onClick={() => joinSession({ voting_id: data.id })}
-            >
+          {!isParticipant && !isOwner && data.is_open ? (
+            <DropdownMenuItem onClick={joinHandler} disabled={loadingJoin}>
+              {loadingJoin ? (
+                <Loader className="animate-spin" />
+              ) : (
+                <CirclePlus />
+              )}
               Join
             </DropdownMenuItem>
           ) : (
             ""
           )}
-          {is_owner && (
+          {isOwner && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => showDelete(data)}>
@@ -138,22 +162,25 @@ export default function VotingDropdown({ data }: Props) {
             variant="destructive"
             onClick={() => openLeave(true)}
           >
+            <LogOut />
             Leave
           </Button>
         )}
-        {!isParticipant && !is_owner && data.is_open ? (
+        {!isParticipant && !isOwner && data.is_open ? (
           <Button
             size="sm"
             variant="secondary"
-            onClick={() => joinSession({ voting_id: data.id })}
+            onClick={joinHandler}
+            disabled={loadingJoin}
           >
+            {loadingJoin ? <Loader className="animate-spin" /> : <CirclePlus />}
             Join
           </Button>
         ) : (
           ""
         )}
 
-        {is_owner && (
+        {isOwner && (
           <Button
             size="sm"
             variant="destructive"

@@ -2,13 +2,24 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { revalidateVote } from "./revalidate-vote";
+import { z } from "zod";
 
-type Params = {
-  voting_id: string;
+type Response = {
+  error?: string;
+  message?: string;
 };
 
-export const joinSession = async ({ voting_id }: Params) => {
+const formSchema = z.string().uuid("Invalid ID");
+
+export const joinSession = async (formData: FormData): Promise<Response> => {
   const supabase = await createClient();
+
+  const { data: voting_id, error: errorParsed } = formSchema.safeParse(
+    formData.get("id"),
+  );
+
+  if (errorParsed) return { error: "Invalid Id" };
 
   const {
     data: { user },
@@ -16,11 +27,17 @@ export const joinSession = async ({ voting_id }: Params) => {
 
   if (!user) redirect("/login");
 
-  const { error } = await supabase.from("voters").insert({ voting_id });
+  const { error, data } = await supabase
+    .from("voters")
+    .insert({ voting_id })
+    .select("*,votings!inner(name)")
+    .single();
 
-  if (error) {
-    redirect(`/votings/${voting_id}/vote?error=${error.message}`);
-  }
+  if (error) return { error: error.message };
 
-  redirect(`/votings/${voting_id}/vote`);
+  revalidateVote(voting_id);
+
+  return {
+    message: `Joined to ${data.votings.name} successfully`,
+  };
 };

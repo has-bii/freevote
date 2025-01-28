@@ -12,7 +12,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Loader, Plus, Sparkle, Trash2 } from "lucide-react";
 import { z } from "zod";
-import { description, photo, stringAlphabetNumber } from "@/lib/form-schema";
+import { description, photo } from "@/lib/form-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -32,13 +32,15 @@ import { useSupabase } from "@/utils/supabase/client";
 import { generateRandomName } from "@/utils/generate-random-name";
 import { getPublicUrl } from "@/utils/get-public-url";
 import { useQueryClient } from "@tanstack/react-query";
+import { revalidateChoice } from "./revalidate-choice";
+import { TChoice } from "@/types/model";
 
 type Props = {
   id: string;
 };
 
 const FormSchema = z.object({
-  name: stringAlphabetNumber,
+  name: z.string().min(4, "Min. 4 characters"),
   description: description,
   link: z.optional(z.string()),
   color: z.string(),
@@ -82,18 +84,21 @@ export default function AddChoice({ id }: Props) {
         image = getPublicUrl({ bucket: "choices", supabase, url: path.path });
     }
 
-    const { error } = await supabase
+    const { error, data: newData } = await supabase
       .from("choices")
-      .insert({ voting_id: id, image, ...data });
+      .insert({ voting_id: id, image, ...data })
+      .select("*")
+      .single();
 
     if (error) {
       toast.error("Failed to add a choice");
       return;
     }
 
-    query.invalidateQueries({
-      queryKey: ["choices", id],
-    });
+    query.setQueryData<TChoice[]>(["choices", id], (prev) =>
+      prev ? [...prev, newData] : undefined,
+    );
+    revalidateChoice(id);
 
     setOpen(false);
     form.reset();

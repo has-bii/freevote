@@ -12,7 +12,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Loader, Save, Trash2 } from "lucide-react";
 import { z } from "zod";
-import { description, photo, stringAlphabetNumber } from "@/lib/form-schema";
+import { description, photo } from "@/lib/form-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -34,6 +34,7 @@ import { getPublicUrl } from "@/utils/get-public-url";
 import { useQueryClient } from "@tanstack/react-query";
 import { TChoice } from "@/types/model";
 import { removeFile } from "@/utils/remove-file";
+import { revalidateChoice } from "./revalidate-choice";
 
 type Props = {
   data: TChoice;
@@ -41,7 +42,7 @@ type Props = {
 };
 
 const FormSchema = z.object({
-  name: stringAlphabetNumber,
+  name: z.string().min(4, "Min. 4 characters"),
   description: description,
   link: z.optional(z.string()),
   color: z.string(),
@@ -100,9 +101,8 @@ export default function EditChoice({ data, children }: Props) {
       return;
     }
 
-    query.invalidateQueries({
-      queryKey: ["choices", data.voting_id],
-    });
+    query.invalidateQueries({ queryKey: ["choices", data.voting_id] });
+    revalidateChoice(data.voting_id);
 
     setOpen(false);
     form.reset(payload);

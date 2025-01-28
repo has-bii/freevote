@@ -12,8 +12,9 @@ import { useSupabase } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Loader, Trash } from "lucide-react";
+import { Loader, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { revalidateVote } from "@/actions/revalidate-vote";
 
 export default function DeleteVoting() {
   const { data, close } = useDeleteVoting();
@@ -38,6 +39,7 @@ export default function DeleteVoting() {
     setLoading(false);
     close();
     query.invalidateQueries({ queryKey: ["votings"] });
+    revalidateVote(data.id);
     router.push("/votings");
   }, [close, data, query, router, supabase]);
 
@@ -60,7 +62,7 @@ export default function DeleteVoting() {
             onClick={deleteHandler}
             disabled={loading}
           >
-            Delete {loading ? <Loader className="animate-spin" /> : <Trash />}
+            {loading ? <Loader className="animate-spin" /> : <Trash2 />}Delete
           </Button>
         </div>
       </DialogContent>

@@ -1,5 +1,8 @@
-import VotingPage from "@/components/voting/voting-page";
+import HeaderVotePage from "@/components/voting/header-vote-page";
 import React from "react";
+
+export const fetchCache = "force-cache";
+export const revalidate = 300;
 
 type Props = {
   children: React.ReactNode;
@@ -11,7 +14,7 @@ export default async function VotingLayout({ children, params }: Props) {
 
   return (
     <>
-      <VotingPage voting_id={voting_id} />
+      <HeaderVotePage id={voting_id} />
       {children}
     </>
   );

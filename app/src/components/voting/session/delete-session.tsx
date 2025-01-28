@@ -14,6 +14,7 @@ import { Loader, Trash2 } from "lucide-react";
 import { TSupabaseClient } from "@/utils/supabase/server";
 import { QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { revalidateVote } from "@/actions/revalidate-vote";
 
 type Props = {
   children: React.ReactNode;
@@ -46,6 +47,7 @@ export default function DeleteSession({
       return;
     }
 
+    revalidateVote(data.voting_id);
     query.invalidateQueries({ queryKey: ["session", data.voting_id] });
     setOpen(false);
   };

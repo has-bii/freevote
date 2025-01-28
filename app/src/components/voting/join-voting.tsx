@@ -22,18 +22,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Clipboard, Loader } from "lucide-react";
-import { useSupabase } from "@/utils/supabase/client";
+import { CirclePlus, Clipboard, Loader } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { joinSession } from "@/actions/join-session";
 
 const FormSchema = z.object({
   id: z.string().uuid(),
 });
 
 export default function JoinVoting() {
-  const supabase = useSupabase();
   const [open, setOpen] = React.useState(false);
   const query = useQueryClient();
   const router = useRouter();
@@ -46,15 +45,18 @@ export default function JoinVoting() {
   });
 
   const onSubmit = async (payload: z.infer<typeof FormSchema>) => {
-    const { error } = await supabase
-      .from("voters")
-      .insert({ voting_id: payload.id });
+    const formData = new FormData();
+    formData.set("id", payload.id);
+
+    const { error, message } = await joinSession(formData);
 
     if (error) {
-      toast.error(error.message);
+      toast.error(error);
+      form.reset();
       return;
     }
 
+    toast.success(message);
     query.invalidateQueries({ queryKey: ["all votes"] });
     router.push(`/votings/${payload.id}`);
   };
@@ -103,11 +105,17 @@ export default function JoinVoting() {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              Join
-              {form.formState.isSubmitting && (
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
                 <Loader className="animate-spin" />
+              ) : (
+                <CirclePlus />
               )}
+              Join
             </Button>
           </form>
         </Form>

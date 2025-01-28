@@ -56,9 +56,7 @@ export default function Page() {
         </div>
         <div className="mt-2 grid flex-1 gap-2 lg:grid-cols-5">
           {createdVotings === undefined ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full" />
-            ))
+            <Skeleton className="h-28 w-full" />
           ) : createdVotings.length === 0 ? (
             <div className="flex h-28 items-center justify-center rounded-lg border lg:col-span-5">
               <p className="text-sm text-muted-foreground">
@@ -77,9 +75,7 @@ export default function Page() {
         </div>
         <div className="mt-2 grid flex-1 gap-2 lg:grid-cols-5">
           {joinedVotings === undefined ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full" />
-            ))
+            <Skeleton className="h-28 w-full" />
           ) : joinedVotings.length === 0 ? (
             <div className="flex h-28 items-center justify-center rounded-lg border lg:col-span-5">
               <p className="text-sm text-muted-foreground">

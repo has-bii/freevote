@@ -1,7 +1,9 @@
 "use client";
 
-import { useGetParticipants } from "@/hooks/participants/use-get-participants";
-import { useSupabase } from "@/utils/supabase/client";
+import {
+  useGetParticipants,
+  UseGetParticipantsParams,
+} from "@/hooks/participants/use-get-participants";
 import React from "react";
 import {
   Table,
@@ -13,56 +15,57 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAuth } from "@/hooks/auth/use-auth";
 import { Button } from "@/components/ui/button";
 import RemoveParticipant, {
   TParticipantRemove,
 } from "./remove/remove-participant";
-import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RefreshCw, Trash2 } from "lucide-react";
 
-type Props = {
+interface Props extends UseGetParticipantsParams {
   id: string;
-};
+}
 
-export default function Participants({ id }: Props) {
-  const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
-  const { data: votingData } = useGetVotingById(supabase, id);
-  const { data: participants } = useGetParticipants(supabase, id);
+export default function Participants({ id, initialData }: Props) {
+  const {
+    data: participants,
+    refetch,
+    isRefetching,
+  } = useGetParticipants({ id, initialData });
   const [removeData, setRemoveData] = React.useState<
     TParticipantRemove | undefined
   >();
 
-  const is_owner = React.useMemo(() => {
-    if (!user || !votingData) return false;
-
-    return user.id === votingData?.user_id;
-  }, [user, votingData]);
-
   return (
-    <div className="p-4 pt-0">
+    <div className="space-y-2 p-4 pt-0">
+      <div className="flex justify-end">
+        <Button onClick={() => refetch()} disabled={isRefetching}>
+          <RefreshCw className={isRefetching ? "animate-spin" : ""} />
+          Refresh
+        </Button>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Name</TableHead>
             <TableHead className="text-right">Joined At</TableHead>
-            {is_owner && <TableHead className="text-right">Actions</TableHead>}
+            <TableHead className="sr-only">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {participants === undefined ? (
             Array.from({ length: 10 }).map((_, i) => (
               <TableRow key={i}>
-                <TableCell colSpan={is_owner ? 4 : 3}>
+                <TableCell colSpan={4}>
                   <Skeleton className="h-8 w-full" />
                 </TableCell>
               </TableRow>
             ))
           ) : participants.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={is_owner ? 4 : 3}>
+              <TableCell colSpan={3}>
                 <div className="flex h-28 w-full items-center justify-center">
                   <p className="text-muted-foreground">No participant exists</p>
                 </div>
@@ -92,19 +95,18 @@ export default function Participants({ id }: Props) {
                   <TableCell className="text-right">
                     {format(created_at, "PP p")}
                   </TableCell>
-                  {is_owner && (
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => setRemoveData(participant)}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    </TableCell>
-                  )}
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => setRemoveData(participant)}
+                      >
+                        <Trash2 />
+                        Remove
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               );
             })

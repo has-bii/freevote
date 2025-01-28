@@ -47,11 +47,11 @@ const FormSchema = z.object({
   session_end_at: z.string(),
 });
 
-export default function AddNewSession({ data: { id } }: Props) {
+export default function AddNewSession({ data: { id: voting_id } }: Props) {
   const [open, setOpen] = React.useState(false);
   const supabase = useSupabase();
   const query = useQueryClient();
-  const { data: choices } = useGetChoices(supabase, id);
+  const { data: choices } = useGetChoices({ supabase, voting_id });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -68,7 +68,7 @@ export default function AddNewSession({ data: { id } }: Props) {
   const onSubmit = async (payload: z.infer<typeof FormSchema>) => {
     const formData = new FormData();
 
-    formData.set("voting_id", id);
+    formData.set("voting_id", voting_id);
     formData.set("name", payload.name);
     formData.set("description", payload.description);
     formData.set(
@@ -92,7 +92,7 @@ export default function AddNewSession({ data: { id } }: Props) {
 
     toast.success("New session has been created");
     query.invalidateQueries({
-      queryKey: ["session", id],
+      queryKey: ["session", voting_id],
     });
     form.reset();
     setOpen(false);

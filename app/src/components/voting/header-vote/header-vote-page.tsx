@@ -17,6 +17,7 @@ import VotingPageNav from "@/components/voting/voting-page-nav";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import DynamicIconn from "../../dynamic-icon";
+import { actionGetParticipants } from "@/hooks/participants/action-get-participants";
 
 type Props = {
   params: Promise<{ voting_id: string }>;
@@ -35,10 +36,7 @@ export default async function HeaderVotePage({ params }: Props) {
 
   const fetchUser = supabase.auth.getUser();
 
-  const fetchParticipant = supabase
-    .from("voters")
-    .select("*")
-    .eq("voting_id", voting_id);
+  const fetchParticipant = actionGetParticipants(voting_id);
 
   const [
     { data: votingData, error: er1 },
@@ -48,7 +46,7 @@ export default async function HeaderVotePage({ params }: Props) {
     { data: participants, error: er2 },
   ] = await Promise.all([fetchVoting, fetchUser, fetchParticipant]);
 
-  if (er1 || er2) redirect("/votings");
+  if (er1 || er2 !== null) redirect("/votings");
 
   const isParticipant = participants.find((p) => p.user_id === user?.id);
   const isOwner = votingData.user_id === user?.id;

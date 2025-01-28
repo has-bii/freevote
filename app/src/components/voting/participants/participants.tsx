@@ -6,9 +6,6 @@ import {
 } from "@/hooks/participants/use-get-participants";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import RemoveParticipant, {
-  TParticipantRemove,
-} from "./remove/remove-participant";
 import { RefreshCw } from "lucide-react";
 import { DataTable } from "./table/data-table";
 import { columns } from "./table/columns";
@@ -23,9 +20,6 @@ export default function Participants({ id, initialData }: Props) {
     refetch,
     isRefetching,
   } = useGetParticipants({ id, initialData });
-  const [removeData, setRemoveData] = React.useState<
-    TParticipantRemove | undefined
-  >();
 
   return (
     <div className="space-y-2 p-4 pt-0">
@@ -37,12 +31,6 @@ export default function Participants({ id, initialData }: Props) {
       </div>
 
       <DataTable columns={columns} data={participants} />
-
-      <RemoveParticipant
-        open={removeData !== undefined}
-        close={() => setRemoveData(undefined)}
-        data={removeData}
-      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { TParticipant, TProfile } from "@/types/model";
 import { ColumnDef } from "@tanstack/react-table";
 import { compareAsc, format } from "date-fns";
 import { ArrowUpDown, Trash2 } from "lucide-react";
+import RemoveParticipant from "../remove/remove-participant";
 
 type TData = TParticipant & {
   profiles: Pick<TProfile, "full_name" | "avatar">;
@@ -77,12 +78,14 @@ export const columns: ColumnDef<TData>[] = [
   },
   {
     id: "actions",
-    cell: ({}) => (
+    cell: ({ row: { original } }) => (
       <div className="flex justify-end pr-2">
-        <Button size="sm" variant="destructive">
-          <Trash2 />
-          Remove
-        </Button>
+        <RemoveParticipant data={original}>
+          <Button size="sm" variant="destructive">
+            <Trash2 />
+            Remove
+          </Button>
+        </RemoveParticipant>
       </div>
     ),
   },

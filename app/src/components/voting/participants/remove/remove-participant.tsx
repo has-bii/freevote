@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { TParticipant } from "@/types/model";
 import { Button } from "@/components/ui/button";
@@ -36,12 +37,13 @@ export type TParticipantRemove = TParticipant & {
 };
 
 type Props = {
-  open: boolean;
-  close: () => void;
-  data?: TParticipantRemove;
+  data: TParticipantRemove;
+  children: React.ReactNode;
 };
 
-export default function RemoveParticipant({ close, data, open }: Props) {
+export default function RemoveParticipant({ data, children }: Props) {
+  const [open, setOpen] = React.useState(false);
+
   const query = useQueryClient();
   const FormSchema = z.object({
     confirm: z.string().refine((v) => data?.profiles.full_name.trim() === v),
@@ -68,11 +70,12 @@ export default function RemoveParticipant({ close, data, open }: Props) {
     revalidateVote(data.voting_id);
     form.reset();
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
-    close();
+    setOpen(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={close}>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Remove Participant from Voting Session</DialogTitle>
@@ -104,7 +107,11 @@ export default function RemoveParticipant({ close, data, open }: Props) {
               )}
             />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="secondary" onClick={close}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button

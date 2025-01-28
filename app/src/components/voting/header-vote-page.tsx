@@ -75,10 +75,21 @@ export default async function HeaderVotePage({ id }: Props) {
       <div className="p-4 pt-0">
         <div className="flex items-start gap-4">
           {votingData && (
-            <DynamicIconn name={votingData.icon as IconName} size={56} />
+            <div className="flex w-fit">
+              <DynamicIconn
+                name={votingData.icon as IconName}
+                className="shrink-0"
+                size={56}
+              />
+            </div>
           )}
           <div className="5 space-y-1">
-            <p className="text-xl font-bold">{votingData?.name}</p>
+            <p
+              className="line-clamp-2 text-xl font-bold"
+              title={votingData.name}
+            >
+              {votingData.name}
+            </p>
             <div className="inline-flex gap-2">
               <Badge variant={votingData?.is_open ? "default" : "secondary"}>
                 {votingData?.is_open ? "open" : "closed"}

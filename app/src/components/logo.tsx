@@ -20,7 +20,7 @@ export default function Logo() {
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
               <Vote className="size-4" />
             </div>
-            <span className="font-semibold">Free Vote</span>
+            <span className="font-semibold">Quick Vote</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>

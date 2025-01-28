@@ -45,7 +45,6 @@ const FormSchema = z.object({
   name: z.string().min(4, "Min. 4 characters"),
   description: description,
   link: z.optional(z.string()),
-  color: z.string(),
 });
 
 export default function EditChoice({ data, children }: Props) {
@@ -60,7 +59,6 @@ export default function EditChoice({ data, children }: Props) {
     defaultValues: {
       name: data.name,
       description: data.description,
-      color: data.color,
       link: data.link ?? "",
     },
   });
@@ -168,21 +166,6 @@ export default function EditChoice({ data, children }: Props) {
                       placeholder="Provide additional details about this choice"
                       {...field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="after:text-red-400 after:content-['*']">
-                    Color
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="color" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

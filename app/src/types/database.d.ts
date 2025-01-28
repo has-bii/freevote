@@ -11,7 +11,6 @@ export type Database = {
     Tables: {
       choices: {
         Row: {
-          color: string
           created_at: string
           description: string
           id: string
@@ -21,7 +20,6 @@ export type Database = {
           voting_id: string
         }
         Insert: {
-          color: string
           created_at?: string
           description: string
           id?: string
@@ -31,7 +29,6 @@ export type Database = {
           voting_id: string
         }
         Update: {
-          color?: string
           created_at?: string
           description?: string
           id?: string

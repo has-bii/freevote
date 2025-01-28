@@ -23,11 +23,15 @@ export default async function VotingServerPage({ params }: Props) {
     .from("choices")
     .select("*")
     .eq("voting_id", voting_id);
+  const fetchUser = supabase.auth.getUser();
 
-  const [{ data: votingData }, { data: choicesData }] = await Promise.all([
-    fetchVotingData,
-    fetchChoicesData,
-  ]);
+  const [
+    { data: votingData },
+    { data: choicesData },
+    {
+      data: { user },
+    },
+  ] = await Promise.all([fetchVotingData, fetchChoicesData, fetchUser]);
 
   if (!votingData || choicesData === null) redirect("/votings");
 
@@ -38,6 +42,7 @@ export default async function VotingServerPage({ params }: Props) {
         choicesData,
         votingData,
       }}
+      user={user!}
     />
   );
 }

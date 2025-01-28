@@ -1,7 +1,6 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAuth } from "@/hooks/auth/use-auth";
 import { useGetChoices } from "@/hooks/choices/use-get-choices";
 import { useSupabase } from "@/utils/supabase/client";
 import React from "react";
@@ -9,6 +8,7 @@ import AddChoice from "./add-choice";
 import Choice from "./choice";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { TChoice, TVoting } from "@/types/model";
+import { User } from "@supabase/supabase-js";
 
 type Props = {
   voting_id: string;
@@ -16,11 +16,11 @@ type Props = {
     votingData: TVoting;
     choicesData: TChoice[];
   };
+  user: User;
 };
 
-export default function ChoicesPage({ voting_id, initialData }: Props) {
+export default function ChoicesPage({ voting_id, initialData, user }: Props) {
   const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
   const { data: choices } = useGetChoices({
     initialData: initialData.choicesData,
     supabase,
@@ -31,6 +31,8 @@ export default function ChoicesPage({ voting_id, initialData }: Props) {
     supabase,
     initialData: initialData.votingData,
   });
+
+  const isOwner = user.id === votingData.user_id;
 
   return (
     <div className="space-y-4 p-4 pt-0">
@@ -54,11 +56,7 @@ export default function ChoicesPage({ voting_id, initialData }: Props) {
           </div>
         ) : (
           choices.map((choice) => (
-            <Choice
-              key={choice.id}
-              data={choice}
-              isOwner={user?.id === votingData?.user_id}
-            />
+            <Choice key={choice.id} data={choice} isOwner={isOwner} />
           ))
         )}
       </div>

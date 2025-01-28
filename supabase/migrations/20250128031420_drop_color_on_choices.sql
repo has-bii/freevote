@@ -1,0 +1,1 @@
+alter table choices drop column color;

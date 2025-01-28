@@ -26,10 +26,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { logout } from "@/app/(api)/logout/logout";
-import { User } from "@supabase/supabase-js";
 import Link from "next/link";
+import { useSupabase } from "@/utils/supabase/client";
+import { useGetAuth } from "@/hooks/auth/use-auth";
 
-export function NavUser({ user }: { user?: User | null }) {
+export function NavUser() {
+  const supabase = useSupabase();
+  const { data: user } = useGetAuth(supabase);
   const { isMobile } = useSidebar();
 
   return (

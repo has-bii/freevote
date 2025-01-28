@@ -1,5 +1,5 @@
 import React from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/nav/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import DeleteVoting from "@/components/voting/delete-voting";
 

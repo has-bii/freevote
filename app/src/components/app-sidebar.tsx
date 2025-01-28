@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useSupabase } from "@/utils/supabase/client";
 import { useGetAuth } from "@/hooks/auth/use-auth";
@@ -26,6 +27,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const supabase = useSupabase();
   const { data: user } = useGetAuth(supabase);
   const pathname = usePathname();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -37,7 +39,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/"}>
-                <Link href="/" className="truncate">
+                <Link
+                  href="/"
+                  onClick={() => toggleSidebar()}
+                  className="truncate"
+                >
                   <HomeIcon />
                   Getting Started
                 </Link>
@@ -45,7 +51,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === "/votings"}>
-                <Link href="/votings" className="truncate">
+                <Link
+                  href="/votings"
+                  onClick={() => toggleSidebar()}
+                  className="truncate"
+                >
                   <VoteIcon />
                   My Votings
                 </Link>

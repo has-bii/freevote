@@ -105,7 +105,7 @@ export default function AddNewSession({ data: { id: voting_id } }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button size="sm">
           <TimerIcon />
           New Session
         </Button>

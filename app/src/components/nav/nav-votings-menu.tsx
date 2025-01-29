@@ -31,7 +31,12 @@ export default function NavVotingsMenu({ data }: Props) {
   return data.map((item) => (
     <SidebarMenuItem key={item.id}>
       <SidebarMenuButton asChild>
-        <Link href={`/votings/${item.id}`} onClick={() => setOpenMobile(false)}>
+        <Link
+          href={`/votings/${item.id}/votes`}
+          onClick={() => setOpenMobile(false)}
+          title={item.name}
+          prefetch
+        >
           <DynamicIconn name={item.icon as IconName} />
           <span>{item.name}</span>
         </Link>

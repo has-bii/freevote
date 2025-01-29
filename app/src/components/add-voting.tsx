@@ -39,6 +39,7 @@ import { toast } from "sonner";
 import { Loader, Plus } from "lucide-react";
 import { useSupabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { revalidateVotingsLayout } from "@/actions/revalidate-votings-layout";
 
 type Props = {
   children: React.ReactNode;
@@ -79,6 +80,7 @@ export default function AddVoting({ children }: Props) {
       }
 
       query.invalidateQueries({ queryKey: ["votings"] });
+      revalidateVotingsLayout();
       setOpen(false);
       form.reset();
       router.push(`/votings/${data.id}`);

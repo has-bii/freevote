@@ -54,11 +54,13 @@ export default function Page() {
           <span className="text-lg font-medium">Created</span>
           <Separator orientation="horizontal" className="flex-1" />
         </div>
-        <div className="mt-2 grid flex-1 gap-2 lg:grid-cols-5">
+        <div className="mt-2 grid flex-1 gap-4 lg:grid-cols-5">
           {createdVotings === undefined ? (
-            <Skeleton className="h-28 w-full" />
+            Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-xl" />
+            ))
           ) : createdVotings.length === 0 ? (
-            <div className="flex h-28 items-center justify-center rounded-lg border lg:col-span-5">
+            <div className="flex h-24 items-center justify-center rounded-lg border lg:col-span-5">
               <p className="text-sm text-muted-foreground">
                 You don&apos;t have created votings.
               </p>
@@ -73,11 +75,13 @@ export default function Page() {
           <span className="text-lg font-medium">Joined</span>
           <Separator orientation="horizontal" className="flex-1" />
         </div>
-        <div className="mt-2 grid flex-1 gap-2 lg:grid-cols-5">
+        <div className="mt-2 grid flex-1 gap-4 lg:grid-cols-5">
           {joinedVotings === undefined ? (
-            <Skeleton className="h-28 w-full" />
+            Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-xl" />
+            ))
           ) : joinedVotings.length === 0 ? (
-            <div className="flex h-28 items-center justify-center rounded-lg border lg:col-span-5">
+            <div className="flex h-24 items-center justify-center rounded-lg border lg:col-span-5">
               <p className="text-sm text-muted-foreground">
                 You don&apos;t have joined votings.
               </p>

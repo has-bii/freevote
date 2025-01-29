@@ -48,7 +48,8 @@ export default function VotePage({ voting_id, initialData }: Props) {
   return (
     <div className="space-y-4 p-4 pt-0">
       {user?.id === votingData.user_id && (
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Sessions List</h2>
           <AddNewSession data={votingData} />
         </div>
       )}

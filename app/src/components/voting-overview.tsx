@@ -3,7 +3,6 @@ import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import Link from "next/link";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 
 type Props = {
   data: TVoting;
@@ -12,26 +11,25 @@ type Props = {
 export default function VotingOverview({ data }: Props) {
   return (
     <Link
-      href={`/votings/${data.id}`}
+      href={`/votings/${data.id}/vote`}
       role="link"
-      className="flex h-28 w-full flex-col rounded-lg border px-4 py-3"
+      className="flex h-28 w-full flex-col space-y-2 rounded-xl border px-4 py-3 shadow"
+      prefetch
     >
-      <div className="flex items-center justify-between">
-        <div className="inline-flex items-center gap-2 truncate">
-          <DynamicIcon name={data.icon as IconName} size={20} />
-          <p className="flex-1 truncate text-sm font-medium" title={data.name}>
-            {data.name}
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-2">
+        <DynamicIcon name={data.icon as IconName} size={20} />
+        <p className="flex-1 truncate text-sm font-medium" title={data.name}>
+          {data.name}
+        </p>
 
         <Badge variant={data.is_open ? "default" : "secondary"}>
           {data.is_open ? "open" : "closed"}
         </Badge>
       </div>
 
-      <span className="mt-0.5 text-xs text-muted-foreground">
-        {format(data.created_at, "PPP")}
-      </span>
+      <p className="line-clamp-3 text-pretty text-justify text-xs text-muted-foreground">
+        {data.description}
+      </p>
     </Link>
   );
 }

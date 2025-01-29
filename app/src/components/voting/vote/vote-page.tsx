@@ -56,7 +56,7 @@ export default function VotePage({ voting_id, initialData }: Props) {
       <div className="space-y-2">
         {sessions.length === 0 ? (
           <div className="flex h-28 w-full items-center justify-center rounded-lg border text-sm text-muted-foreground">
-            Session does not exist
+            A session does not exist
           </div>
         ) : (
           sessions.map((d) => (

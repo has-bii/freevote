@@ -1,4 +1,4 @@
-import { TSession } from "@/types/model";
+import { TSession, TVote } from "@/types/model";
 import { TSupabaseClient } from "@/utils/supabase/server";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -6,7 +6,7 @@ import { toast } from "sonner";
 type Params = {
   supabase: TSupabaseClient;
   voting_id: string;
-  initialData: TSession[];
+  initialData: (TSession & { votes: TVote[] })[];
 };
 
 export const useGetSession = ({ initialData, supabase, voting_id }: Params) =>
@@ -16,11 +16,11 @@ export const useGetSession = ({ initialData, supabase, voting_id }: Params) =>
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sessions")
-        .select("*")
+        .select("*,votes(*)")
         .eq("voting_id", voting_id);
 
       if (error) {
-        toast.error("Failed to get sessions");
+        toast.error(error.message);
         throw new Error(error.message);
       }
 

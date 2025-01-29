@@ -145,6 +145,62 @@ export type Database = {
           },
         ]
       }
+      votes: {
+        Row: {
+          choice_id: string
+          created_at: string
+          id: number
+          session_id: string
+          user_id: string
+          voting_id: string
+        }
+        Insert: {
+          choice_id: string
+          created_at?: string
+          id?: never
+          session_id: string
+          user_id?: string
+          voting_id: string
+        }
+        Update: {
+          choice_id?: string
+          created_at?: string
+          id?: never
+          session_id?: string
+          user_id?: string
+          voting_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_choice_id_fkey"
+            columns: ["choice_id"]
+            isOneToOne: false
+            referencedRelation: "choices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_voting_id_fkey"
+            columns: ["voting_id"]
+            isOneToOne: false
+            referencedRelation: "votings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       votings: {
         Row: {
           created_at: string

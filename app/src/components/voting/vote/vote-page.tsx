@@ -5,7 +5,7 @@ import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { useSupabase } from "@/utils/supabase/client";
 import React from "react";
 import AddNewSession from "@/components/voting/session/add-new-session";
-import { TChoice, TSession, TVoting } from "@/types/model";
+import { TChoice, TParticipant, TSession, TVote, TVoting } from "@/types/model";
 import { useGetSession } from "@/hooks/sessions/use-session";
 import Session from "@/components/voting/session/session";
 
@@ -13,8 +13,11 @@ type Props = {
   voting_id: string;
   initialData: {
     voting: TVoting;
-    sessions: TSession[];
+    sessions: (TSession & {
+      votes: TVote[];
+    })[];
     choices: TChoice[];
+    participants: TParticipant[];
   };
 };
 
@@ -37,6 +40,11 @@ export default function VotePage({ voting_id, initialData }: Props) {
     [user?.id, votingData.user_id],
   );
 
+  const isParticipant = React.useMemo(
+    () => initialData.participants.some(({ user_id }) => user?.id === user_id),
+    [initialData.participants, user?.id],
+  );
+
   return (
     <div className="space-y-4 p-4 pt-0">
       {user?.id === votingData.user_id && (
@@ -57,6 +65,7 @@ export default function VotePage({ voting_id, initialData }: Props) {
               data={d}
               is_owner={is_owner}
               choices={initialData.choices}
+              isParticipant={isParticipant}
             />
           ))
         )}

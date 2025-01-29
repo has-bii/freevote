@@ -13,15 +13,8 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, CircleCheckBig } from "lucide-react";
-import { TChoice } from "@/types/model";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import Image from "next/image";
+import { TChoice, TVote } from "@/types/model";
+import { CarouselApi } from "@/components/ui/carousel";
 import { useMediaQuery } from "usehooks-ts";
 import {
   Dialog,
@@ -32,14 +25,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import ChoicesCarousel from "@/components/voting/vote/choices-carousel";
 
 type Props = {
   choices: TChoice[];
   name: string;
   description: string | null;
+  session_id: string;
+  votes: TVote[];
 };
 
-export default function GiveVote({ choices, description, name }: Props) {
+export default function GiveVote({
+  choices,
+  description,
+  name,
+  session_id,
+  votes,
+}: Props) {
   const [api, setApi] = React.useState<CarouselApi>();
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -56,42 +58,15 @@ export default function GiveVote({ choices, description, name }: Props) {
           <div className="mx-auto w-full md:max-w-md">
             <DialogHeader>
               <DialogTitle>{name}</DialogTitle>
-              <DialogDescription>{description}testset</DialogDescription>
+              <DialogDescription>{description}</DialogDescription>
             </DialogHeader>
-            <Carousel className="mt-4 w-full" setApi={setApi}>
-              <CarouselContent>
-                {choices.map((choice) => (
-                  <CarouselItem key={choice.id}>
-                    <div className="p-1">
-                      <Card className="overflow-hidden">
-                        <div className="relative aspect-video w-full">
-                          {choice.image && (
-                            <Image
-                              alt={choice.name}
-                              src={choice.image}
-                              fill
-                              className="object-cover"
-                            />
-                          )}
-                        </div>
-                        <CardContent className="h-fit w-full space-y-1.5 p-6">
-                          <span className="font-semibold">{choice.name}</span>
-                          <p className="text-sm text-muted-foreground">
-                            {choice.description}
-                          </p>
-                        </CardContent>
-                        <CardFooter>
-                          <Button className="w-full">
-                            <CircleCheckBig />
-                            Vote
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+
+            <ChoicesCarousel
+              choices={choices}
+              setApi={setApi}
+              votes={votes}
+              session_id={session_id}
+            />
             <DialogFooter className="mt-4">
               <div className="flex w-full gap-2">
                 <Button
@@ -131,40 +106,12 @@ export default function GiveVote({ choices, description, name }: Props) {
             <DrawerTitle>{name}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
           </DrawerHeader>
-          <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent>
-              {choices.map((choice) => (
-                <CarouselItem key={choice.id}>
-                  <div className="p-4">
-                    <Card className="overflow-hidden">
-                      <div className="relative aspect-video w-full">
-                        {choice.image && (
-                          <Image
-                            alt={choice.name}
-                            src={choice.image}
-                            fill
-                            className="object-cover"
-                          />
-                        )}
-                      </div>
-                      <CardContent className="h-fit w-full space-y-1.5 p-6">
-                        <span className="font-semibold">{choice.name}</span>
-                        <p className="text-sm text-muted-foreground">
-                          {choice.description}
-                        </p>
-                      </CardContent>
-                      <CardFooter>
-                        <Button className="w-full">
-                          <CircleCheckBig />
-                          Vote
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+          <ChoicesCarousel
+            choices={choices}
+            setApi={setApi}
+            votes={votes}
+            session_id={session_id}
+          />
           <DrawerFooter>
             <div className="flex w-full gap-2">
               <Button

@@ -1,6 +1,6 @@
 "use client";
 
-import { TChoice, TSession } from "@/types/model";
+import { TChoice, TSession, TVote } from "@/types/model";
 import React from "react";
 import {
   Card,
@@ -25,12 +25,20 @@ import { Progress } from "@/components/ui/progress";
 import GiveVote from "./give-vote";
 
 type Props = {
-  data: TSession;
+  data: TSession & {
+    votes: TVote[];
+  };
   is_owner: boolean;
+  isParticipant: boolean;
   choices: TChoice[];
 };
 
-export default function Session({ data, is_owner, choices }: Props) {
+export default function Session({
+  data,
+  is_owner,
+  choices,
+  isParticipant,
+}: Props) {
   const supabase = useSupabase();
   const query = useQueryClient();
   const [progress, setProgress] = React.useState(0);
@@ -83,11 +91,17 @@ export default function Session({ data, is_owner, choices }: Props) {
         <div className="flex items-center justify-between">
           <CardTitle>{data.name}</CardTitle>
           <div className="inline-flex gap-2">
-            <GiveVote
-              choices={filteredChoices}
-              name={data.name}
-              description={data.description}
-            />
+            {isStart && !isEnd && isParticipant ? (
+              <GiveVote
+                session_id={data.id}
+                choices={filteredChoices}
+                name={data.name}
+                description={data.description}
+                votes={data.votes}
+              />
+            ) : (
+              ""
+            )}
             {is_owner && (
               <DeleteSession id={data.id} supabase={supabase} query={query}>
                 <Button size="sm" variant="destructive">

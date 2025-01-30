@@ -18,7 +18,7 @@ export default async function Page({ params }: Props) {
   // Fetch session data with votes
   const fetchResult = supabase
     .from("sessions")
-    .select("*,votes(*,choices(*))")
+    .select("*,votes(*,choices(*),profiles(full_name,avatar))")
     .eq("id", session_id)
     .single();
 
@@ -37,16 +37,32 @@ export default async function Page({ params }: Props) {
   // Fetch participants
   const fetchParticipants = actionGetParticipants(voting_id);
 
+  // Fetch user
+  const fetchUser = supabase.auth.getUser();
+
+  // Fetch voting data
+  const fetchVoting = supabase
+    .from("votings")
+    .select("user_id")
+    .eq("id", voting_id)
+    .single();
+
   const [
     { data: result, error: errorResult },
     { data: sessions, error: errorSessions },
     { data: choices, error: errorChoices },
     { data: participants, error: errorParticipants },
+    {
+      data: { user },
+    },
+    { data: voting },
   ] = await Promise.all([
     fetchResult,
     fetchSessions,
     fetchChoices,
     fetchParticipants,
+    fetchUser,
+    fetchVoting,
   ]);
 
   if (
@@ -99,6 +115,7 @@ export default async function Page({ params }: Props) {
         session_id={session_id}
         choices={filteredChoices}
         participants={participants.length}
+        isAdmin={user?.id === voting?.user_id}
       />
     </div>
   );

@@ -35,7 +35,7 @@ export const joinSession = async (formData: FormData): Promise<Response> => {
 
   if (error) return { error: error.message };
 
-  revalidateVote(voting_id);
+  revalidateVote();
 
   return {
     message: `Joined to ${data.votings.name} successfully`,

@@ -39,7 +39,7 @@ export default function DeleteVoting() {
     setLoading(false);
     close();
     query.invalidateQueries({ queryKey: ["votings"] });
-    revalidateVote(data.id);
+    revalidateVote();
     router.push("/votings");
   }, [close, data, query, router, supabase]);
 

@@ -59,7 +59,7 @@ export const actionAddSession = async (
 
     if (errorInsert) return { data: null, error: errorInsert.message };
 
-    revalidateVote(parsedData.voting_id);
+    revalidateVote();
     return { error: null, data: newData };
   } catch (error) {
     console.error("Failed to add new session: ", error);

@@ -66,7 +66,7 @@ export default function VotingDropdown({
     } else {
       toast.success(`Voting has been ${state ? "opened" : "closed"}`);
       query.setQueryData<TVoting>(["voting", data.id], () => newData);
-      revalidateVote(data.id);
+      revalidateVote();
     }
 
     toast.dismiss(toastId);

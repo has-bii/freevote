@@ -47,7 +47,7 @@ export default function DeleteSession({
       return;
     }
 
-    revalidateVote(data.voting_id);
+    revalidateVote();
     query.invalidateQueries({ queryKey: ["session", data.voting_id] });
     setOpen(false);
   };

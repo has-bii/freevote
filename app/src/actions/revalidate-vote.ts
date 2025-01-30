@@ -2,8 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-export const revalidateVote = async (id: string) => {
-  revalidatePath(`/votings/${id}/vote`);
-  revalidatePath(`/votings/${id}/choices`);
-  revalidatePath(`/votings/${id}/participants`);
+export const revalidateVote = async () => {
+  revalidatePath("/(main)/votings/[voting_id]", "layout");
 };

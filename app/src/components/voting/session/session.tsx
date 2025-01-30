@@ -19,10 +19,11 @@ import {
 import { useSupabase } from "@/utils/supabase/client";
 import DeleteSession from "./delete-session";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { ChartPie, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
 import GiveVote from "./give-vote";
+import Link from "next/link";
 
 type Props = {
   data: TSession & {
@@ -155,6 +156,14 @@ export default function Session({
           </p>
         )}
         {!isEnd && <Progress value={progress} />}
+        {isEnd && (
+          <Button asChild size="sm" className="ml-auto">
+            <Link href={`/votings/${data.voting_id}/result/${data.id}`}>
+              <ChartPie />
+              See result
+            </Link>
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

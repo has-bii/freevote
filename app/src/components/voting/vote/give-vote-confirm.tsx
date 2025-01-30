@@ -51,7 +51,7 @@ export default function GiveVoteConfirm({
     }
 
     toast.success("Your vote has been recorded successfully!");
-    revalidateVote(voting_id);
+    revalidateVote();
     query.invalidateQueries({
       queryKey: ["session", voting_id],
     });

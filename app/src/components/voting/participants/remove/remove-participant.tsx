@@ -67,7 +67,7 @@ export default function RemoveParticipant({ data, children }: Props) {
     }
 
     toast.success(message);
-    revalidateVote(data.voting_id);
+    revalidateVote();
     form.reset();
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
     setOpen(false);

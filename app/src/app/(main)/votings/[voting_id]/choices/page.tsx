@@ -4,9 +4,6 @@ import { redirect } from "next/navigation";
 import { getVotingByIdCached } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
 import { getChoiceCached } from "@/app/(api)/api/choice/[voting_id]/get-choice-cached";
 
-export const fetchCache = "force-cache";
-export const revalidate = 300;
-
 type Props = {
   params: Promise<{ voting_id: string }>;
 };

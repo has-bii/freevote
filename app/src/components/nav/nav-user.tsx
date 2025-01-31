@@ -5,7 +5,6 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
-  LogOut,
   Sparkles,
 } from "lucide-react";
 
@@ -25,10 +24,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { logout } from "@/app/(api)/logout/logout";
 import Link from "next/link";
 import { useSupabase } from "@/utils/supabase/client";
 import { useGetAuth } from "@/hooks/auth/use-auth";
+import LogoutButton from "./logout-button";
 
 export function NavUser() {
   const supabase = useSupabase();
@@ -118,10 +117,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
+            <LogoutButton supabase={supabase} />
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

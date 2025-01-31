@@ -17,7 +17,12 @@ export default function ShareVoting() {
   const [isCopied, setCopied] = React.useState(false);
 
   React.useEffect(() => {
-    if (isCopied) setTimeout(() => setCopied(false), 2000);
+    let timeout: NodeJS.Timeout | null = null;
+    if (isCopied) timeout = setTimeout(() => setCopied(false), 2000);
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
   }, [isCopied]);
 
   return (

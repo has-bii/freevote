@@ -1,4 +1,4 @@
-import HeaderVotePage from "@/components/voting/header-vote/header-vote-page";
+import HeaderVoteRoot from "@/components/voting/header-vote/header-vote-root";
 import Skeletonn from "@/components/voting/header-vote/skeletonn";
 import React from "react";
 
@@ -11,7 +11,7 @@ export default function VotingLayout({ children, params }: Props) {
   return (
     <>
       <React.Suspense fallback={<Skeletonn />}>
-        <HeaderVotePage params={params} />
+        <HeaderVoteRoot params={params} />
       </React.Suspense>
       {children}
     </>

@@ -30,7 +30,8 @@ import LeaveParticipant from "./participants/leave-participant";
 import { useModalLeave } from "@/hooks/use-modal-leave";
 import { joinSession } from "@/actions/join-session";
 import { useDeleteVoting } from "@/hooks/votings/use-modal-delete-voting";
-import { revalidateVote } from "@/actions/revalidate-vote";
+import { revalidateVoting } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
+import DeleteVoting from "./delete-voting";
 
 type Props = {
   data: TVoting;
@@ -60,26 +61,30 @@ export default function VotingDropdown({ data, participants }: Props) {
     return data.user_id === user.id;
   }, [data.user_id, user]);
 
-  const openCloseHandler = async (state: boolean) => {
-    const toastId = toast.loading("Loading...", { duration: Infinity });
-    const { error, data: newData } = await supabase
-      .from("votings")
-      .update({ is_open: state })
-      .eq("id", data.id)
-      .select("*")
-      .single();
+  const openCloseHandler = React.useCallback(
+    async (state: boolean) => {
+      const toastId = toast.loading("Loading...", { duration: Infinity });
+      const { error } = await supabase
+        .from("votings")
+        .update({ is_open: state })
+        .eq("id", data.id);
 
-    if (error) {
-      toast.error(`Failed to ${state ? "open" : "close"} voting`);
-      console.log(error);
-    } else {
-      toast.success(`Voting has been ${state ? "opened" : "closed"}`);
-      query.setQueryData<TVoting>(["voting", data.id], () => newData);
-      revalidateVote();
-    }
+      if (error) {
+        toast.error(`Failed to ${state ? "open" : "close"} voting`);
+        console.log(error);
+      } else {
+        toast.success(`Voting has been ${state ? "opened" : "closed"}`);
+        query.setQueryData<TVoting>(["voting", data.id], (prev) =>
+          prev ? { ...prev, is_open: state } : undefined,
+        );
+        await revalidateVoting(data.id);
+      }
 
-    toast.dismiss(toastId);
-  };
+      toast.dismiss(toastId);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data.id],
+  );
 
   const joinHandler = async () => {
     const formData = new FormData();
@@ -201,6 +206,7 @@ export default function VotingDropdown({ data, participants }: Props) {
       </div>
 
       <ShareVoting />
+      <DeleteVoting />
       {isParticipant && (
         <LeaveParticipant
           data={isParticipant}

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Breadcrumb,
@@ -14,27 +16,35 @@ import { IconName } from "lucide-react/dynamic";
 import { Badge } from "@/components/ui/badge";
 import VotingDropdown from "@/components/voting/voting-dropdown";
 import VotingPageNav from "@/components/voting/voting-page-nav";
-import { redirect } from "next/navigation";
 import DynamicIconn from "../../dynamic-icon";
 import ParticipantOwnerBadge from "@/components/participant-owner-badge";
-import { getVotingByIdCached } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
-import { getParticipantCached } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached";
+import { TParticipant, TProfile, TVoting } from "@/types/model";
+import { useSupabase } from "@/utils/supabase/client";
+import { useGetVotingById } from "@/hooks/votings/use-get-votings";
+import { useGetParticipants } from "@/hooks/participants/use-get-participants";
 
 type Props = {
-  params: Promise<{ voting_id: string }>;
+  voting_id: string;
+  initialData: {
+    voting: TVoting;
+    participants: Array<
+      TParticipant & { profiles: Pick<TProfile, "full_name" | "avatar"> }
+    >;
+  };
 };
 
-export default async function HeaderVotePage({ params }: Props) {
-  const { voting_id } = await params;
-
-  const fetchVoting = getVotingByIdCached(voting_id);
-
-  const fetchParticipant = getParticipantCached(voting_id);
-
-  const [{ data: votingData, error: er1 }, { data: participants, error: er2 }] =
-    await Promise.all([fetchVoting, fetchParticipant]);
-
-  if (er1 !== null || er2 !== null) redirect("/votings");
+export default function HeaderVotePage({ initialData, voting_id }: Props) {
+  const { participants, voting } = initialData;
+  const supabase = useSupabase();
+  const { data: votingData } = useGetVotingById({
+    supabase,
+    id: voting_id,
+    initialData: voting,
+  });
+  const { data: participantsData } = useGetParticipants({
+    initialData: participants,
+    id: voting_id,
+  });
 
   return (
     <>
@@ -76,8 +86,8 @@ export default async function HeaderVotePage({ params }: Props) {
               {votingData.name}
             </p>
             <div className="inline-flex gap-2">
-              <Badge variant={votingData?.is_open ? "default" : "secondary"}>
-                {votingData?.is_open ? "open" : "closed"}
+              <Badge variant={votingData.is_open ? "default" : "secondary"}>
+                {votingData.is_open ? "open" : "closed"}
               </Badge>
 
               <ParticipantOwnerBadge
@@ -102,7 +112,7 @@ export default async function HeaderVotePage({ params }: Props) {
             <VotingPageNav
               id={voting_id}
               owner_id={votingData.user_id}
-              participants={participants.length}
+              participants={participantsData.length}
             />
           </div>
         </React.Suspense>

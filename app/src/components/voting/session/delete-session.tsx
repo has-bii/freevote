@@ -11,50 +11,47 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader, Trash2 } from "lucide-react";
-import { TSupabaseClient } from "@/utils/supabase/server";
-import { QueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { revalidateVote } from "@/actions/revalidate-vote";
+import { useSupabase } from "@/utils/supabase/client";
+import { revalidateSession } from "@/app/(api)/api/session/[voting_id]/get-session-cached";
+import { TSession } from "@/types/model";
 
 type Props = {
-  children: React.ReactNode;
-  id: string;
-  supabase: TSupabaseClient;
-  query: QueryClient;
+  data: TSession;
 };
 
-export default function DeleteSession({
-  children,
-  id,
-  supabase,
-  query,
+const DeleteSession = React.memo(function DeleteSession({
+  data: { id, voting_id },
 }: Props) {
+  const supabase = useSupabase();
+  const query = useQueryClient();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   const onDeleteHandler = async () => {
     setLoading(true);
-    const { error, data } = await supabase
-      .from("sessions")
-      .delete()
-      .eq("id", id)
-      .select("*")
-      .single();
-    setLoading(false);
+    const { error } = await supabase.from("sessions").delete().eq("id", id);
 
     if (error) {
+      setLoading(false);
       toast.error("Failed to delete session");
       return;
     }
 
-    revalidateVote();
-    query.invalidateQueries({ queryKey: ["session", data.voting_id] });
+    await revalidateSession(voting_id);
+    query.invalidateQueries({ queryKey: ["session", voting_id] });
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="destructive">
+          <Trash2 />
+          Delete
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
@@ -68,7 +65,11 @@ export default function DeleteSession({
           <Button variant="secondary" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onDeleteHandler}>
+          <Button
+            variant="destructive"
+            onClick={onDeleteHandler}
+            disabled={loading}
+          >
             {loading ? <Loader className="animate-spin" /> : <Trash2 />}
             Delete
           </Button>
@@ -76,4 +77,6 @@ export default function DeleteSession({
       </DialogContent>
     </Dialog>
   );
-}
+});
+
+export default DeleteSession;

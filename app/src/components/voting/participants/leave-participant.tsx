@@ -15,8 +15,9 @@ import { TSupabaseClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Loader, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { revalidateVote } from "@/actions/revalidate-vote";
 import { useRouter } from "next/navigation";
+import { revalidateParticipant } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached";
+import { revalidateResultByVotingId } from "@/app/(api)/api/result/[session_id]/get-result-cached";
 
 type Props = {
   data: TParticipant;
@@ -35,13 +36,17 @@ export default function LeaveParticipant({ data, query, supabase }: Props) {
     setLoading(false);
 
     if (error) {
+      setLoading(false);
       toast.error("Failed to leave the voting session");
       return;
     }
 
+    await revalidateParticipant(data.voting_id);
+    await revalidateResultByVotingId(data.voting_id);
+    setLoading(false);
+    close();
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
     query.invalidateQueries({ queryKey: ["is participant", data.voting_id] });
-    revalidateVote();
     router.push("/votings");
   };
 

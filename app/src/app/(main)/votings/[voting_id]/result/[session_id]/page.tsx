@@ -1,7 +1,10 @@
+import { getChoiceCached } from "@/app/(api)/api/choice/[voting_id]/get-choice-cached";
+import { getParticipantCached } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached";
+import { getResultCached } from "@/app/(api)/api/result/[session_id]/get-result-cached";
+import { getSessionCached } from "@/app/(api)/api/session/[voting_id]/get-session-cached";
+import { getVotingByIdCached } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
 import ResultChart from "@/components/voting/result/result-chart";
 import SelectSessions from "@/components/voting/result/select-sessions";
-import { actionGetParticipants } from "@/hooks/participants/action-get-participants";
-import { createClient } from "@/utils/supabase/server";
 import React from "react";
 
 type Props = {
@@ -13,82 +16,34 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { session_id, voting_id } = await params;
-  const supabase = await createClient();
-
-  // Fetch session data with votes
-  const fetchResult = supabase
-    .from("sessions")
-    .select("*,votes(*,choices(*),profiles(full_name,avatar))")
-    .eq("id", session_id)
-    .single();
-
-  // Fetch sessions
-  const fetchSessions = supabase
-    .from("sessions")
-    .select("*")
-    .eq("voting_id", voting_id);
-
-  // Fetch choices
-  const fetchChoices = supabase
-    .from("choices")
-    .select("*")
-    .eq("voting_id", voting_id);
-
-  // Fetch participants
-  const fetchParticipants = actionGetParticipants(voting_id);
-
-  // Fetch user
-  const fetchUser = supabase.auth.getUser();
-
-  // Fetch voting data
-  const fetchVoting = supabase
-    .from("votings")
-    .select("user_id")
-    .eq("id", voting_id)
-    .single();
 
   const [
     { data: result, error: errorResult },
     { data: sessions, error: errorSessions },
     { data: choices, error: errorChoices },
     { data: participants, error: errorParticipants },
-    {
-      data: { user },
-    },
-    { data: voting },
+    { data: voting, error: errorVoting },
   ] = await Promise.all([
-    fetchResult,
-    fetchSessions,
-    fetchChoices,
-    fetchParticipants,
-    fetchUser,
-    fetchVoting,
+    getResultCached(session_id),
+    getSessionCached(voting_id),
+    getChoiceCached(voting_id),
+    getParticipantCached(voting_id),
+    getVotingByIdCached(voting_id),
   ]);
 
-  if (
-    errorResult ||
-    errorSessions ||
-    errorChoices ||
-    errorParticipants ||
-    participants === null
-  )
-    // If error
-    return (
-      <div className="p-4 pt-0">
-        <div className="flex h-28 w-full items-center justify-center rounded-xl border">
-          <p className="text-center text-sm text-muted-foreground">
-            {errorResult
-              ? errorResult.message
-              : errorSessions
-                ? errorSessions.message
-                : errorChoices
-                  ? errorChoices.message
-                  : errorParticipants
-                    ? errorParticipants
-                    : "Unexpected error has occurred"}
-          </p>
-        </div>
-      </div>
+  if (!result || !sessions || !choices || !participants || !voting)
+    throw new Error(
+      errorResult
+        ? errorResult
+        : errorSessions
+          ? errorSessions
+          : errorChoices
+            ? errorChoices
+            : errorParticipants
+              ? errorParticipants
+              : errorVoting
+                ? errorVoting
+                : "Unexpected error has occurred",
     );
 
   const filteredChoices = choices.filter((c) =>
@@ -115,7 +70,7 @@ export default async function Page({ params }: Props) {
         session_id={session_id}
         choices={filteredChoices}
         participants={participants.length}
-        isAdmin={user?.id === voting?.user_id}
+        owner_id={voting.user_id}
       />
     </div>
   );

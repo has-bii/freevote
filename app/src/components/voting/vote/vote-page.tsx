@@ -4,8 +4,8 @@ import { useGetAuth } from "@/hooks/auth/use-auth";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { useSupabase } from "@/utils/supabase/client";
 import React from "react";
-import AddNewSession from "@/components/voting/session/add-new-session";
-import { TChoice, TParticipant, TSession, TVote, TVoting } from "@/types/model";
+import AddNewSession from "@/components/voting/session/add-session";
+import { TChoice, TParticipant, TSession, TVoting } from "@/types/model";
 import { useGetSession } from "@/hooks/sessions/use-session";
 import Session from "@/components/voting/session/session";
 
@@ -13,9 +13,7 @@ type Props = {
   voting_id: string;
   initialData: {
     voting: TVoting;
-    sessions: (TSession & {
-      votes: TVote[];
-    })[];
+    sessions: TSession[];
     choices: TChoice[];
     participants: TParticipant[];
   };
@@ -47,12 +45,16 @@ export default function VotePage({ voting_id, initialData }: Props) {
 
   return (
     <div className="space-y-4 p-4 pt-0">
-      {user?.id === votingData.user_id && (
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Sessions List</h2>
-          <AddNewSession data={votingData} />
-        </div>
-      )}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Sessions List</h2>
+        {is_owner && (
+          <AddNewSession
+            initialData={{ choice: initialData.choices }}
+            owner_id={votingData.user_id}
+            voting_id={voting_id}
+          />
+        )}
+      </div>
 
       <div className="space-y-2">
         {sessions.length === 0 ? (

@@ -67,10 +67,6 @@ export function ResultDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  React.useEffect(() => {
-    console.log({ columnFilters });
-  }, [columnFilters]);
-
   return (
     <Card>
       <div className="flex flex-col">

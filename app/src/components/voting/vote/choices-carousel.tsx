@@ -8,35 +8,25 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { useGetAuth } from "@/hooks/auth/use-auth";
 import { TChoice, TVote } from "@/types/model";
-import { useSupabase } from "@/utils/supabase/client";
-import { CircleCheckBig } from "lucide-react";
+import { CircleCheckBig, ImageOff, Loader } from "lucide-react";
 import Image from "next/image";
-import React, { useMemo } from "react";
+import React from "react";
 import GiveVoteConfirm from "./give-vote-confirm";
 
 type Props = {
-  votes: TVote[];
   setApi: (api: CarouselApi) => void;
   choices: TChoice[];
   session_id: string;
+  hasVoted?: TVote | null;
+  closeModal: () => void;
 };
 
-export default function ChoicesCarousel({
-  choices,
-  session_id,
-  setApi,
-  votes,
-}: Props) {
-  const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
+export default function ChoicesCarousel(props: Props) {
+  const { choices, session_id, setApi, hasVoted, closeModal } = props;
 
-  const hasVoted = useMemo((): boolean => {
-    if (!user) return false;
-
-    return votes.some((v) => v.user_id === user.id);
-  }, [user, votes]);
+  const isLoading = React.useMemo(() => hasVoted === undefined, [hasVoted]);
+  const voted = React.useMemo(() => !!hasVoted, [hasVoted]);
 
   return (
     <Carousel className="w-full" setApi={setApi}>
@@ -45,14 +35,16 @@ export default function ChoicesCarousel({
           <CarouselItem key={choice.id}>
             <div className="p-4">
               <Card className="overflow-hidden">
-                <div className="relative aspect-video w-full">
-                  {choice.image && (
+                <div className="relative flex aspect-video w-full items-center justify-center bg-border">
+                  {choice.image ? (
                     <Image
                       alt={choice.name}
                       src={choice.image}
                       fill
                       className="object-cover"
                     />
+                  ) : (
+                    <ImageOff className="size-10" />
                   )}
                 </div>
                 <CardContent className="h-fit w-full space-y-1.5 p-6">
@@ -65,13 +57,23 @@ export default function ChoicesCarousel({
                 </CardContent>
                 <CardFooter>
                   <GiveVoteConfirm
+                    closeModal={closeModal}
                     choice_id={choice.id}
                     session_id={session_id}
                     voting_id={choice.voting_id}
                   >
-                    <Button className="w-full" disabled={hasVoted}>
-                      <CircleCheckBig />
-                      {hasVoted ? "Voted" : "Vote"}
+                    <Button className="w-full" disabled={isLoading || voted}>
+                      {isLoading ? (
+                        <>
+                          <Loader className="animate-spin" />
+                          Checking...
+                        </>
+                      ) : (
+                        <>
+                          <CircleCheckBig />
+                          {voted ? "Voted" : "Vote"}
+                        </>
+                      )}
                     </Button>
                   </GiveVoteConfirm>
                 </CardFooter>

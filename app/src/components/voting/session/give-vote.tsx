@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, CircleCheckBig } from "lucide-react";
-import { TChoice, TVote } from "@/types/model";
+import { TChoice } from "@/types/model";
 import { CarouselApi } from "@/components/ui/carousel";
 import { useMediaQuery } from "usehooks-ts";
 import {
@@ -26,28 +26,31 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ChoicesCarousel from "@/components/voting/vote/choices-carousel";
+import { useSupabase } from "@/utils/supabase/client";
+import { useHasVoted } from "@/hooks/votes/use-has-voted";
 
 type Props = {
   choices: TChoice[];
   name: string;
   description: string | null;
   session_id: string;
-  votes: TVote[];
 };
 
-export default function GiveVote({
-  choices,
-  description,
-  name,
-  session_id,
-  votes,
-}: Props) {
+const GiveVote = React.memo(function GiveVote(props: Props) {
+  const { choices, description, name, session_id } = props;
+  const [open, setOpen] = React.useState(false);
+  const supabase = useSupabase();
+  const { data: hasVoted } = useHasVoted({
+    session_id,
+    supabase,
+    enabled: open,
+  });
   const [api, setApi] = React.useState<CarouselApi>();
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop)
     return (
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button size="sm">
             <CircleCheckBig />
@@ -64,8 +67,9 @@ export default function GiveVote({
             <ChoicesCarousel
               choices={choices}
               setApi={setApi}
-              votes={votes}
               session_id={session_id}
+              hasVoted={hasVoted}
+              closeModal={() => setOpen(false)}
             />
             <DialogFooter className="mt-4">
               <div className="flex w-full gap-2">
@@ -93,7 +97,7 @@ export default function GiveVote({
     );
 
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button size="sm">
           <CircleCheckBig />
@@ -109,8 +113,9 @@ export default function GiveVote({
           <ChoicesCarousel
             choices={choices}
             setApi={setApi}
-            votes={votes}
             session_id={session_id}
+            hasVoted={hasVoted}
+            closeModal={() => setOpen(false)}
           />
           <DrawerFooter>
             <div className="flex w-full gap-2">
@@ -139,4 +144,6 @@ export default function GiveVote({
       </DrawerContent>
     </Drawer>
   );
-}
+});
+
+export default GiveVote;

@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Loader, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { revalidateVote } from "@/actions/revalidate-vote";
+import { revalidateVoting } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
 
 export default function DeleteVoting() {
   const { data, close } = useDeleteVoting();
@@ -36,10 +36,10 @@ export default function DeleteVoting() {
       return;
     }
 
-    setLoading(false);
-    close();
     query.invalidateQueries({ queryKey: ["votings"] });
-    revalidateVote();
+    setLoading(false);
+    revalidateVoting(data.id);
+    close();
     router.push("/votings");
   }, [close, data, query, router, supabase]);
 

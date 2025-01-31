@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { ChartContainer } from "@/components/ui/chart";
-import { TChoice, TProfile, TSession, TVote } from "@/types/model";
+import { TChoice, TResult } from "@/types/model";
 import React from "react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 import { type ChartConfig } from "@/components/ui/chart";
@@ -20,33 +19,20 @@ import { useGetResult } from "@/hooks/result/use-result";
 import { Pie, PieChart } from "recharts";
 import { ResultDataTable } from "./table/result-data-table";
 import { resultColumns } from "./table/result-columns";
-
-const chartConfig = {
-  choice: {
-    label: "Choice",
-    color: "hsl(var(--primary))",
-  },
-} satisfies ChartConfig;
-
-type TData = TSession & {
-  votes: (TVote & {
-    choices: TChoice;
-    profiles: Pick<TProfile, "avatar" | "full_name">;
-  })[];
-};
+import { useGetAuth } from "@/hooks/auth/use-auth";
 
 type Props = {
-  data: TData;
+  data: TResult;
   session_id: string;
   choices: TChoice[];
   participants: number;
-  isAdmin: boolean;
+  owner_id: string;
 };
 
 export default function ResultChart({ data: initialData, ...props }: Props) {
-  const { session_id, choices, participants, isAdmin } = props;
-
+  const { session_id, choices, participants, owner_id } = props;
   const supabase = useSupabase();
+  const { data: user } = useGetAuth(supabase);
   const { data } = useGetResult({
     initialData,
     session_id,
@@ -55,10 +41,11 @@ export default function ResultChart({ data: initialData, ...props }: Props) {
 
   // Bar
   const chartData = React.useMemo(() => {
-    const mappedChoices = choices.map((choice) => ({
+    const mappedChoices = choices.map((choice, i) => ({
       choice: choice.name,
       count: 0,
       id: choice.id,
+      fill: `hsl(var(--chart-${i + 1}))`,
     }));
 
     data.votes.forEach((vote) => {
@@ -71,12 +58,23 @@ export default function ResultChart({ data: initialData, ...props }: Props) {
     return mappedChoices;
   }, [choices, data.votes]);
 
+  // Bar config
+  const chartConfig = React.useMemo(() => {
+    const temp = new Object();
+
+    chartData.forEach((d) => {
+      Object.defineProperty(temp, d.choice, { value: { label: d.choice } });
+    });
+
+    return temp;
+  }, [chartData]);
+
   // Pie
   const chartData2 = React.useMemo(() => {
-    const temp = chartData.map((d, i) => ({
+    const temp = chartData.map((d) => ({
       choice: d.choice,
       count: Math.round((d.count / participants) * 100),
-      fill: `hsl(var(--chart-${i + 1}))`,
+      fill: d.fill,
     }));
 
     temp.push({
@@ -88,7 +86,7 @@ export default function ResultChart({ data: initialData, ...props }: Props) {
     });
 
     return temp;
-  }, []);
+  }, [chartData, data.votes.length, participants]);
 
   // Pie config
   const chartConfig2 = React.useMemo(() => {
@@ -99,7 +97,10 @@ export default function ResultChart({ data: initialData, ...props }: Props) {
     });
 
     return temp;
-  }, []);
+  }, [chartData]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const isOwner = React.useMemo(() => user?.id === owner_id, [user]);
 
   return (
     <>
@@ -115,7 +116,7 @@ export default function ResultChart({ data: initialData, ...props }: Props) {
           </CardHeader>
           <CardContent>
             <ChartContainer
-              config={chartConfig}
+              config={chartConfig as ChartConfig}
               className="min-h-[200px] w-full lg:max-h-[250px]"
             >
               <BarChart
@@ -190,7 +191,7 @@ export default function ResultChart({ data: initialData, ...props }: Props) {
         </Card>
       </div>
 
-      {isAdmin && (
+      {isOwner && (
         <ResultDataTable
           columns={resultColumns}
           data={data.votes}

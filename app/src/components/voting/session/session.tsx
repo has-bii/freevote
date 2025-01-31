@@ -1,6 +1,6 @@
 "use client";
 
-import { TChoice, TSession, TVote } from "@/types/model";
+import { TChoice, TSession } from "@/types/model";
 import React from "react";
 import {
   Card,
@@ -16,75 +16,76 @@ import {
   intlFormatDistance,
   isPast,
 } from "date-fns";
-import { useSupabase } from "@/utils/supabase/client";
 import DeleteSession from "./delete-session";
 import { Button } from "@/components/ui/button";
-import { ChartPie, Trash2 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { ChartPie } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import GiveVote from "./give-vote";
 import Link from "next/link";
 
 type Props = {
-  data: TSession & {
-    votes: TVote[];
-  };
+  data: TSession;
   is_owner: boolean;
   isParticipant: boolean;
   choices: TChoice[];
 };
 
-export default function Session({
-  data,
-  is_owner,
-  choices,
-  isParticipant,
-}: Props) {
-  const supabase = useSupabase();
-  const query = useQueryClient();
+export default function Session({ data, ...props }: Props) {
+  const { is_owner, choices, isParticipant } = props;
+  const [now, setNow] = React.useState(new Date());
   const [progress, setProgress] = React.useState(0);
 
-  const isStart = isPast(data.session_start_at);
-  const isEnd = isPast(data.session_end_at);
+  const { session_start_at, session_end_at, created_at } = data;
 
-  const countDown =
-    isStart && !isEnd
-      ? `Ends ${intlFormatDistance(data.session_end_at, new Date())}`
+  const [isStart, isEnd] = React.useMemo(() => {
+    return [isPast(session_start_at), isPast(session_end_at)];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [now]);
+
+  const countDown = React.useMemo(() => {
+    return isStart && !isEnd
+      ? `Ends ${intlFormatDistance(session_end_at, now)}`
       : !isStart
-        ? `Starts ${intlFormatDistance(data.session_start_at, new Date())}`
-        : `Ended ${intlFormatDistance(data.session_end_at, new Date())}`;
+        ? `Starts ${intlFormatDistance(session_start_at, now)}`
+        : `Ended ${intlFormatDistance(session_end_at, now)}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [now]);
 
+  React.useEffect(() => {
+    const change = () => {
+      const laterDate = isStart ? session_end_at : session_start_at;
+      const earlierDate = isStart ? session_start_at : created_at;
+
+      const diff = differenceInSeconds(laterDate, earlierDate);
+      const diffFromNow = differenceInSeconds(
+        isStart ? session_end_at : session_start_at,
+        now,
+      );
+
+      if (!isEnd) {
+        const result = (diffFromNow / diff) * 100;
+
+        if (result >= 100) setProgress(100);
+        else setProgress(result);
+
+        setNow(new Date());
+      }
+    };
+
+    const to = !isEnd ? setTimeout(() => change(), 1000) : null;
+
+    return () => {
+      if (to) clearTimeout(to);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [now]);
+
+  // Filter choice
   const filteredChoices = React.useMemo(
     () => choices.filter((c) => data.choices.includes(c.id)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
-
-  React.useEffect(() => {
-    const change = () => {
-      if (!isEnd) {
-        const now = new Date();
-        const diff = differenceInSeconds(
-          isStart ? data.session_end_at : data.session_start_at,
-          isStart ? data.session_start_at : data.created_at,
-        );
-        const diffFromNow = differenceInSeconds(
-          isStart ? data.session_end_at : data.session_start_at,
-          now,
-        );
-
-        const result = (diffFromNow / diff) * 100;
-
-        if (result >= 100) setProgress(100);
-        else setProgress(result);
-      }
-    };
-
-    setInterval(() => {
-      change();
-    }, 1000);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Card>
@@ -98,19 +99,11 @@ export default function Session({
                 choices={filteredChoices}
                 name={data.name}
                 description={data.description}
-                votes={data.votes}
               />
             ) : (
               ""
             )}
-            {is_owner && (
-              <DeleteSession id={data.id} supabase={supabase} query={query}>
-                <Button size="sm" variant="destructive">
-                  <Trash2 />
-                  Delete
-                </Button>
-              </DeleteSession>
-            )}
+            {is_owner && <DeleteSession data={data} />}
           </div>
         </div>
         <CardDescription>{data.description}</CardDescription>
@@ -155,7 +148,7 @@ export default function Session({
             {countDown}
           </p>
         )}
-        {!isEnd && <Progress value={progress} />}
+        {isStart && !isEnd ? <Progress value={progress} /> : ""}
         {isEnd && (
           <Button asChild size="sm" className="ml-auto">
             <Link href={`/votings/${data.voting_id}/result/${data.id}`}>

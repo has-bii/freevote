@@ -1,8 +1,8 @@
 "use server";
 
+import { revalidateParticipant } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { revalidateVote } from "./revalidate-vote";
 import { z } from "zod";
 
 type Response = {
@@ -35,7 +35,7 @@ export const joinSession = async (formData: FormData): Promise<Response> => {
 
   if (error) return { error: error.message };
 
-  revalidateVote();
+  revalidateParticipant(voting_id);
 
   return {
     message: `Joined to ${data.votings.name} successfully`,

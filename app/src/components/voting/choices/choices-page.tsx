@@ -40,13 +40,15 @@ export default function ChoicesPage({ voting_id, initialData }: Props) {
 
   return (
     <div className="space-y-4 p-4 pt-0">
-      {votingData && user && votingData.user_id === user.id ? (
-        <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Choices</h2>
+
+        {votingData && user && votingData.user_id === user.id ? (
           <AddChoice id={votingData.id} />
-        </div>
-      ) : (
-        ""
-      )}
+        ) : (
+          ""
+        )}
+      </div>
       <div className="flex flex-col gap-4">
         {choices === undefined ? (
           Array.from({ length: 4 }).map((_, i) => (

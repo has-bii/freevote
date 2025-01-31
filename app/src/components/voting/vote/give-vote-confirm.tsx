@@ -15,22 +15,19 @@ import { Loader } from "lucide-react";
 import { useSupabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { revalidateVote } from "@/actions/revalidate-vote";
 import { Button } from "@/components/ui/button";
+import { revalidateResult } from "@/app/(api)/api/result/[session_id]/get-result-cached";
 
 type Props = {
   session_id: string;
   choice_id: string;
   voting_id: string;
   children: React.ReactNode;
+  closeModal: () => void;
 };
 
-export default function GiveVoteConfirm({
-  session_id,
-  children,
-  choice_id,
-  voting_id,
-}: Props) {
+export default function GiveVoteConfirm(props: Props) {
+  const { session_id, children, choice_id, voting_id, closeModal } = props;
   const supabase = useSupabase();
   const query = useQueryClient();
   const [open, setOpen] = React.useState(false);
@@ -43,19 +40,21 @@ export default function GiveVoteConfirm({
       session_id,
       voting_id,
     });
-    setLoading(false);
 
     if (error) {
+      setLoading(false);
       toast.error(error.message);
       return;
     }
 
+    await revalidateResult(session_id);
+    setLoading(false);
     toast.success("Your vote has been recorded successfully!");
-    revalidateVote();
     query.invalidateQueries({
-      queryKey: ["session", voting_id],
+      queryKey: ["has voted", session_id],
     });
     setOpen(false);
+    closeModal();
   };
 
   return (

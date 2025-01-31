@@ -27,7 +27,6 @@ import { Loader, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { actionRemoveParticipant } from "./action-remove-participant";
-import { revalidateVote } from "@/actions/revalidate-vote";
 
 export type TParticipantRemove = TParticipant & {
   profiles: {
@@ -67,7 +66,6 @@ export default function RemoveParticipant({ data, children }: Props) {
     }
 
     toast.success(message);
-    revalidateVote();
     form.reset();
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
     setOpen(false);

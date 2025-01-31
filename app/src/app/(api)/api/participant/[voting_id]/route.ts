@@ -8,8 +8,6 @@ export async function GET(
 
   const { data, error } = await actionGetParticipants(voting_id);
 
-  await new Promise((res) => setTimeout(res, 5000));
-
   if (error)
     return Response.json({ data: null, error: error }, { status: 404 });
 

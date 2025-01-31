@@ -1,7 +1,8 @@
 import React from "react";
 import ChoicesPage from "@/components/voting/choices/choices-page";
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { getVotingByIdCached } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
+import { getChoiceCached } from "@/app/(api)/api/choice/[voting_id]/get-choice-cached";
 
 export const fetchCache = "force-cache";
 export const revalidate = 300;
@@ -12,26 +13,15 @@ type Props = {
 
 export default async function VotingServerPage({ params }: Props) {
   const { voting_id } = await params;
-  const supabase = await createClient();
 
-  const fetchVotingData = supabase
-    .from("votings")
-    .select("*")
-    .eq("id", voting_id)
-    .single();
-  const fetchChoicesData = supabase
-    .from("choices")
-    .select("*")
-    .eq("voting_id", voting_id);
-  const fetchUser = supabase.auth.getUser();
+  const fetchVotingData = getVotingByIdCached(voting_id);
 
-  const [
-    { data: votingData },
-    { data: choicesData },
-    {
-      data: { user },
-    },
-  ] = await Promise.all([fetchVotingData, fetchChoicesData, fetchUser]);
+  const fetchChoicesData = getChoiceCached(voting_id);
+
+  const [{ data: votingData }, { data: choicesData }] = await Promise.all([
+    fetchVotingData,
+    fetchChoicesData,
+  ]);
 
   if (!votingData || choicesData === null) redirect("/votings");
 
@@ -42,7 +32,6 @@ export default async function VotingServerPage({ params }: Props) {
         choicesData,
         votingData,
       }}
-      user={user!}
     />
   );
 }

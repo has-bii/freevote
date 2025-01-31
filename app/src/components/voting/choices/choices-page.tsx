@@ -8,7 +8,7 @@ import AddChoice from "./add-choice";
 import Choice from "./choice";
 import { useGetVotingById } from "@/hooks/votings/use-get-votings";
 import { TChoice, TVoting } from "@/types/model";
-import { User } from "@supabase/supabase-js";
+import { useGetAuth } from "@/hooks/auth/use-auth";
 
 type Props = {
   voting_id: string;
@@ -16,11 +16,11 @@ type Props = {
     votingData: TVoting;
     choicesData: TChoice[];
   };
-  user: User;
 };
 
-export default function ChoicesPage({ voting_id, initialData, user }: Props) {
+export default function ChoicesPage({ voting_id, initialData }: Props) {
   const supabase = useSupabase();
+  const { data: user } = useGetAuth(supabase);
   const { data: choices } = useGetChoices({
     initialData: initialData.choicesData,
     supabase,
@@ -32,7 +32,11 @@ export default function ChoicesPage({ voting_id, initialData, user }: Props) {
     initialData: initialData.votingData,
   });
 
-  const isOwner = user.id === votingData.user_id;
+  const isOwner = React.useMemo(
+    () => user?.id === votingData.user_id,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user?.id],
+  );
 
   return (
     <div className="space-y-4 p-4 pt-0">

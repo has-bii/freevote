@@ -1,5 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
+
 import React from "react";
 import {
   SidebarMenu,
@@ -9,24 +9,19 @@ import {
 import AddVoting from "@/components/add-voting";
 import { Plus } from "lucide-react";
 import NavVotingsMenu from "./nav-votings-menu";
+import { useSupabase } from "@/utils/supabase/client";
+import { useGetVotings } from "@/hooks/votings/use-get-votings";
+import NavVotingsSkeleton from "./nav-votings-skeleton";
 
-export default async function NavVotings() {
-  const supabase = await createClient();
+export default function NavVotings() {
+  const supabase = useSupabase();
+  const { data: votings, isLoading, error } = useGetVotings(supabase);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-
-  const { data: votings } = await supabase
-    .from("votings")
-    .select("*")
-    .eq("user_id", user.id);
+  if (isLoading || error) return <NavVotingsSkeleton />;
 
   return (
     <SidebarMenu>
-      <NavVotingsMenu data={votings ?? []} />
+      {votings && <NavVotingsMenu data={votings} />}
       <SidebarMenuItem>
         <AddVoting>
           <SidebarMenuButton className="text-sidebar-foreground">

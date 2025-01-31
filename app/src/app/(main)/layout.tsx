@@ -7,9 +7,6 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const fetchCache = "force-cache";
-export const revalidate = 300;
-
 export default function MainLayout({ children }: Props) {
   return (
     <SidebarProvider>

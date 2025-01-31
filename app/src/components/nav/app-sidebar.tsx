@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/sidebar";
 import Logo from "@/components/logo";
 import SidebarMainMenu from "./sidebar-main-menu";
-import NavVotingsSkeleton from "./nav-votings-skeleton";
 import NavVotings from "./nav-votings";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -28,9 +27,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* Votings */}
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Votings</SidebarGroupLabel>
-          <React.Suspense fallback={<NavVotingsSkeleton />}>
-            <NavVotings />
-          </React.Suspense>
+          <NavVotings />
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>

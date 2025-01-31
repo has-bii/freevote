@@ -14,10 +14,11 @@ import { IconName } from "lucide-react/dynamic";
 import { Badge } from "@/components/ui/badge";
 import VotingDropdown from "@/components/voting/voting-dropdown";
 import VotingPageNav from "@/components/voting/voting-page-nav";
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import DynamicIconn from "../../dynamic-icon";
-import { actionGetParticipants } from "@/hooks/participants/action-get-participants";
+import ParticipantOwnerBadge from "@/components/participant-owner-badge";
+import { getVotingByIdCached } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
+import { getParticipantCached } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached";
 
 type Props = {
   params: Promise<{ voting_id: string }>;
@@ -26,30 +27,14 @@ type Props = {
 export default async function HeaderVotePage({ params }: Props) {
   const { voting_id } = await params;
 
-  const supabase = await createClient();
+  const fetchVoting = getVotingByIdCached(voting_id);
 
-  const fetchVoting = supabase
-    .from("votings")
-    .select("*")
-    .eq("id", voting_id)
-    .single();
+  const fetchParticipant = getParticipantCached(voting_id);
 
-  const fetchUser = supabase.auth.getUser();
+  const [{ data: votingData, error: er1 }, { data: participants, error: er2 }] =
+    await Promise.all([fetchVoting, fetchParticipant]);
 
-  const fetchParticipant = actionGetParticipants(voting_id);
-
-  const [
-    { data: votingData, error: er1 },
-    {
-      data: { user },
-    },
-    { data: participants, error: er2 },
-  ] = await Promise.all([fetchVoting, fetchUser, fetchParticipant]);
-
-  if (er1 || er2 !== null) redirect("/votings");
-
-  const isParticipant = participants.find((p) => p.user_id === user?.id);
-  const isOwner = votingData.user_id === user?.id;
+  if (er1 !== null || er2 !== null) redirect("/votings");
 
   return (
     <>
@@ -95,18 +80,16 @@ export default async function HeaderVotePage({ params }: Props) {
                 {votingData?.is_open ? "open" : "closed"}
               </Badge>
 
-              {isParticipant && <Badge variant="secondary">joined</Badge>}
-              {isOwner && <Badge variant="secondary">owner</Badge>}
+              <ParticipantOwnerBadge
+                owner_id={votingData.user_id}
+                participants={participants}
+              />
             </div>
           </div>
 
           {votingData && (
             <div className="ml-auto">
-              <VotingDropdown
-                data={votingData}
-                isOwner={isOwner}
-                isParticipant={isParticipant}
-              />
+              <VotingDropdown data={votingData} participants={participants} />
             </div>
           )}
         </div>
@@ -120,7 +103,6 @@ export default async function HeaderVotePage({ params }: Props) {
               id={voting_id}
               owner_id={votingData.user_id}
               participants={participants.length}
-              user={user!}
             />
           </div>
         </React.Suspense>

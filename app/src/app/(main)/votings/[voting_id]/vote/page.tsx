@@ -3,9 +3,6 @@ import { actionGetParticipants } from "@/hooks/participants/action-get-participa
 import { createClient } from "@/utils/supabase/server";
 import React from "react";
 
-export const fetchCache = "force-cache";
-export const revalidate = 300;
-
 type Props = {
   params: Promise<{ voting_id: string }>;
 };

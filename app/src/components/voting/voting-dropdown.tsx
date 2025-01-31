@@ -34,15 +34,10 @@ import { revalidateVote } from "@/actions/revalidate-vote";
 
 type Props = {
   data: TVoting;
-  isParticipant?: TParticipant;
-  isOwner: boolean;
+  participants: TParticipant[];
 };
 
-export default function VotingDropdown({
-  data,
-  isOwner,
-  isParticipant,
-}: Props) {
+export default function VotingDropdown({ data, participants }: Props) {
   const query = useQueryClient();
   const supabase = useSupabase();
   const { open: showDelete } = useDeleteVoting();
@@ -50,6 +45,20 @@ export default function VotingDropdown({
   const { open: openLeave } = useModalLeave();
   const { data: user } = useGetAuth(supabase);
   const [loadingJoin, setLoadJoin] = React.useState(false);
+
+  // Check if user is a participant
+  const isParticipant = React.useMemo(() => {
+    if (!user) return false;
+
+    return participants.find((p) => p.user_id === user.id);
+  }, [participants, user]);
+
+  // Check if user is the owner
+  const isOwner = React.useMemo(() => {
+    if (!user) return false;
+
+    return data.user_id === user.id;
+  }, [data.user_id, user]);
 
   const openCloseHandler = async (state: boolean) => {
     const toastId = toast.loading("Loading...", { duration: Infinity });

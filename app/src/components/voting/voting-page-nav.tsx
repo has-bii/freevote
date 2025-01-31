@@ -5,13 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { Button } from "../ui/button";
-import { User } from "@supabase/supabase-js";
+import { useSupabase } from "@/utils/supabase/client";
+import { useGetAuth } from "@/hooks/auth/use-auth";
 
 type Props = {
   id: string;
   owner_id: string;
   participants: number;
-  user: User;
 };
 
 const initNav = [
@@ -25,12 +25,10 @@ const initNav = [
   },
 ];
 
-export default function VotingPageNav({
-  id,
-  owner_id,
-  participants,
-  user,
-}: Props) {
+export default function VotingPageNav({ id, owner_id, participants }: Props) {
+  const supabase = useSupabase();
+  const { data: user } = useGetAuth(supabase);
+
   const [navs, setNavs] =
     React.useState<Array<{ name: string; icon: LucideIcon; data?: string }>>(
       initNav,
@@ -54,8 +52,7 @@ export default function VotingPageNav({
           icon: Sparkles,
         },
       ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [owner_id, participants, user]);
 
   return (
     <nav className="flex max-w-full flex-nowrap items-center gap-2 overflow-hidden overflow-x-auto border-b pb-2">

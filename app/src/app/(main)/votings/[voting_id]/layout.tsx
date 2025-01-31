@@ -2,9 +2,6 @@ import HeaderVotePage from "@/components/voting/header-vote/header-vote-page";
 import Skeletonn from "@/components/voting/header-vote/skeletonn";
 import React from "react";
 
-export const fetchCache = "force-cache";
-export const revalidate = 300;
-
 type Props = {
   children: React.ReactNode;
   params: Promise<{ voting_id: string }>;

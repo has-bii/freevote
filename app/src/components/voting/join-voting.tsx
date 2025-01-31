@@ -57,7 +57,7 @@ export default function JoinVoting() {
     }
 
     toast.success(message);
-    query.invalidateQueries({ queryKey: ["all votes"] });
+    query.invalidateQueries({ queryKey: ["joined votings"] });
     router.push(`/votings/${payload.id}`);
   };
 

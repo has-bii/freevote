@@ -45,6 +45,7 @@ export default function LeaveParticipant({ data, query, supabase }: Props) {
     await revalidateResultByVotingId(data.voting_id);
     setLoading(false);
     close();
+    query.invalidateQueries({ queryKey: ["joined votings"] });
     query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
     query.invalidateQueries({ queryKey: ["is participant", data.voting_id] });
     router.push("/votings");

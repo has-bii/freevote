@@ -166,12 +166,12 @@ export default function AddVoting({ children }: Props) {
             />
             <div className="flex justify-end">
               <Button type="submit" disabled={form.formState.isSubmitting}>
-                Add
                 {form.formState.isSubmitting ? (
                   <Loader className="animate-spin" />
                 ) : (
                   <Plus />
                 )}
+                Add
               </Button>
             </div>
           </form>

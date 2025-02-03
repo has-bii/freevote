@@ -2,18 +2,25 @@
 
 import { useTheme } from "next-themes";
 import React from "react";
-import { Button } from "./ui/button";
+import { Button, ButtonProps } from "./ui/button";
 import { Sun, Moon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({
+  className,
+  size = "icon",
+  variant = "ghost",
+  ...props
+}: ButtonProps) {
   const { setTheme, theme } = useTheme();
 
   return (
     <Button
-      size="icon"
-      variant="ghost"
-      className="h-7 w-7"
+      size={size}
+      variant={variant}
+      className={cn("h-7 w-7", className)}
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      {...props}
     >
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />

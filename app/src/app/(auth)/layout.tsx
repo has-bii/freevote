@@ -1,5 +1,10 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
+import logoImg from "@/app/icon_black.png";
+import { buttonVariants } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import ThemeToggle from "@/components/theme-toggle";
+import ImageCarousel from "@/components/auth/image-carousel";
 
 type Props = {
   children: React.ReactNode;
@@ -7,23 +12,32 @@ type Props = {
 
 export default function AuthLayout({ children }: Props) {
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-3xl">
-        <div className="flex flex-col gap-6">
-          <Card className="overflow-hidden">
-            <CardContent className="grid p-0 md:grid-cols-2">
-              {children}
-              <div className="bg-muted relative hidden md:block">
-                {/* Image */}
-              </div>
-            </CardContent>
-          </Card>
-          {/* <div className="text-muted-foreground hover:[&_a]:text-primary text-balance text-center text-xs [&_a]:underline [&_a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>
-        &nbsp; and <a href="#">Privacy Policy</a>.
-      </div> */}
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className={buttonVariants({
+                variant: "ghost",
+              })}
+            >
+              <Image
+                alt="logo"
+                src={logoImg}
+                className="rounded-lg bg-black p-1 dark:invert"
+              />
+              <span className="font-semibold">Quick Vote</span>
+            </Link>
+            <Separator orientation="vertical" className="h-4" />
+            <ThemeToggle />
+          </div>
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-sm">{children}</div>
         </div>
       </div>
+      <ImageCarousel />
     </div>
   );
 }

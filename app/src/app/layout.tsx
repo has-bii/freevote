@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import "lucide-static"
 import "react-image-crop/dist/ReactCrop.css"
 import RootProvider from "@/providers/root-provider"
 

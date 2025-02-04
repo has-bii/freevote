@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 import {
   Dialog,
   DialogContent,
@@ -8,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { z } from "zod";
-import { description, icon, stringAlphabetNumber } from "@/lib/form-schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from "@/components/ui/dialog"
+import { z } from "zod"
+import { description, icon, stringAlphabetNumber } from "@/lib/form-schema"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -21,49 +21,48 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { Loader, MousePointer2, Plus } from "lucide-react"
+import { useSupabase } from "@/utils/supabase/client"
+import { useRouter } from "next/navigation"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { IconNames } from "@/lib/lucid-icons";
-import { DynamicIcon } from "lucide-react/dynamic";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Loader, Plus } from "lucide-react";
-import { useSupabase } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import DynamicIconn from "./dynamic-icon"
+import IconPicker from "./icon-picker"
+import { IconName } from "lucide-react/dynamic"
 
 type Props = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 const FormSchema = z.object({
   name: stringAlphabetNumber,
   description: description,
   icon: icon,
-});
+})
 
 export default function AddVoting({ children }: Props) {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const query = useQueryClient();
-  const supabase = useSupabase();
-  const router = useRouter();
+  const [open, setOpen] = React.useState<boolean>(false)
+  const query = useQueryClient()
+  const supabase = useSupabase()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
       description: "",
-      icon: "target",
     },
-  });
+  })
 
   const onSubmit = async (payload: z.infer<typeof FormSchema>) => {
     try {
@@ -71,22 +70,22 @@ export default function AddVoting({ children }: Props) {
         .from("votings")
         .insert(payload)
         .select("*")
-        .single();
+        .single()
 
       if (error) {
-        toast.error("Failed to add new voting");
-        return;
+        toast.error("Failed to add new voting")
+        return
       }
 
-      query.invalidateQueries({ queryKey: ["votings"] });
-      setOpen(false);
-      form.reset();
-      router.push(`/votings/${data.id}`);
+      query.invalidateQueries({ queryKey: ["votings"] })
+      setOpen(false)
+      form.reset()
+      router.push(`/votings/${data.id}`)
     } catch (error) {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error("Unexpected error has occurred!");
+      if (error instanceof Error) toast.error(error.message)
+      else toast.error("Unexpected error has occurred!")
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -138,28 +137,46 @@ export default function AddVoting({ children }: Props) {
               control={form.control}
               name="icon"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Icon</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an icon" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {IconNames.map((i) => (
-                        <SelectItem key={i} value={i}>
-                          <div className="flex items-center gap-2">
-                            <DynamicIcon name={i} size="20" />
-                            {i}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover modal>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-[240px] justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? (
+                            <>
+                              <DynamicIconn
+                                name={field.value as IconName}
+                                className="h-4 w-4"
+                              />
+                              <span className="capitalize">
+                                {field.value.replaceAll("-", " ")}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Pick an icon</span>
+                              <MousePointer2 className="ml-auto h-4 w-4 opacity-50" />
+                            </>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <React.Suspense fallback={"Loading..."}>
+                        <IconPicker
+                          icon={field.value}
+                          onSelectIcon={field.onChange}
+                        />
+                      </React.Suspense>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -178,5 +195,5 @@ export default function AddVoting({ children }: Props) {
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

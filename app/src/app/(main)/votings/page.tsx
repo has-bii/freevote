@@ -1,29 +1,29 @@
-"use client";
+"use client"
 
-import React from "react";
-import { useSupabase } from "@/utils/supabase/client";
+import React from "react"
+import { useSupabase } from "@/utils/supabase/client"
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import AddVoting from "@/components/add-voting";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import JoinVoting from "@/components/voting/join-voting";
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import AddVoting from "@/components/add-voting"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import JoinVoting from "@/components/voting/join-voting"
 import {
   useGetJoinedVotings,
   useGetVotings,
-} from "@/hooks/votings/use-get-votings";
-import VotingOverview from "@/components/voting-overview";
+} from "@/hooks/votings/use-get-votings"
+import VotingOverview from "@/components/voting-overview"
 
 export default function Page() {
-  const supabase = useSupabase();
-  const { data: createdVotings } = useGetVotings(supabase);
-  const { data: joinedVotings } = useGetJoinedVotings(supabase);
+  const supabase = useSupabase()
+  const { data: createdVotings } = useGetVotings(supabase)
+  const { data: joinedVotings } = useGetJoinedVotings(supabase)
 
   return (
     <>
@@ -92,5 +92,5 @@ export default function Page() {
         </div>
       </div>
     </>
-  );
+  )
 }

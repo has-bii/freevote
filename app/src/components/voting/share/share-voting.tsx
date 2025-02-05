@@ -1,29 +1,21 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useShareVoting } from "./use-share-voting";
-import { Button } from "@/components/ui/button";
-import { Fingerprint } from "lucide-react";
+} from "@/components/ui/dialog"
+import { useShareVoting } from "./use-share-voting"
+import { Button } from "@/components/ui/button"
+import { Fingerprint, LinkIcon } from "lucide-react"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import TooltipTimer from "@/components/tooltip-timer"
 
 export default function ShareVoting() {
-  const { close, id } = useShareVoting();
-  const [isCopied, setCopied] = React.useState(false);
-
-  React.useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
-    if (isCopied) timeout = setTimeout(() => setCopied(false), 2000);
-
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [isCopied]);
+  const { close, id } = useShareVoting()
 
   return (
     <Dialog open={id !== null} onOpenChange={close}>
@@ -31,28 +23,43 @@ export default function ShareVoting() {
         <DialogHeader>
           <DialogTitle>Share Your Voting Session</DialogTitle>
           <DialogDescription>
-            {/* Invite others to join your voting session by sharing the unique
-            Voting ID or a direct link. Choose your preferred sharing method
-            below. */}
             Invite others to join your voting session by sharing the unique
-            Voting ID. Choose your preferred sharing method below.
+            Voting ID or sharing the link. Choose your preferred sharing method
+            below.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            onClick={() => {
-              navigator.clipboard.writeText(id!);
-              setCopied(true);
-            }}
-            disabled={isCopied}
-          >
-            <Fingerprint />
-            {isCopied ? "Copied" : "Copy ID"}
-          </Button>
-          <Button onClick={close}>Done</Button>
+        <div className="flex items-center gap-2">
+          <TooltipProvider>
+            <TooltipTimer text="copied">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  navigator.clipboard.writeText(id!)
+                }}
+              >
+                <Fingerprint />
+                Copy ID
+              </Button>
+            </TooltipTimer>
+            <TooltipTimer text="copied">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${process.env.NEXT_PUBLIC_APP_URL}/votings/${id}`,
+                  )
+                }}
+              >
+                <LinkIcon />
+                Copy Link
+              </Button>
+              <Button className="ml-auto" onClick={close}>
+                Done
+              </Button>
+            </TooltipTimer>
+          </TooltipProvider>
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

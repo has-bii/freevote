@@ -30,33 +30,33 @@ export default function ShareVoting() {
         </DialogHeader>
         <div className="flex items-center gap-2">
           <TooltipProvider>
-            <TooltipTimer text="copied">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(id!)
-                }}
-              >
+            <TooltipTimer
+              text="copied"
+              onClick={() => {
+                navigator.clipboard.writeText(id!)
+              }}
+            >
+              <Button variant="outline">
                 <Fingerprint />
                 Copy ID
               </Button>
             </TooltipTimer>
-            <TooltipTimer text="copied">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    `${process.env.NEXT_PUBLIC_APP_URL}/votings/${id}`,
-                  )
-                }}
-              >
+            <TooltipTimer
+              text="copied"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${process.env.NEXT_PUBLIC_APP_URL}/votings/${id}`,
+                )
+              }}
+            >
+              <Button variant="outline">
                 <LinkIcon />
                 Copy Link
               </Button>
-              <Button className="ml-auto" onClick={close}>
-                Done
-              </Button>
             </TooltipTimer>
+            <Button className="ml-auto" onClick={close}>
+              Done
+            </Button>
           </TooltipProvider>
         </div>
       </DialogContent>

@@ -23,7 +23,9 @@ export default function SelectSessions({ data, current, voting_id }: Props) {
 
   const filtered = React.useMemo(
     () =>
-      data.filter((d) => (d.session_end_at ? isPast(d.session_end_at) : false)),
+      data.filter((d) =>
+        d.session_start_at ? isPast(d.session_start_at) : false,
+      ),
     [data],
   )
 

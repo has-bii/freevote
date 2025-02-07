@@ -32,7 +32,7 @@ export default function SidebarMainMenu() {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild isActive={pathname === "/"}>
+          <SidebarMenuButton asChild isActive={pathname === "/public"}>
             <Link
               href="/public"
               onClick={() => setOpenMobile(false)}

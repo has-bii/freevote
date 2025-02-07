@@ -1,22 +1,22 @@
-"use client";
+"use client"
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { login } from "@/app/(auth)/login/actions";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useActionState, useEffect } from "react";
-import { toast } from "sonner";
-import { Loader } from "lucide-react";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { login } from "@/app/(auth)/login/actions"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { useActionState, useEffect } from "react"
+import { toast } from "sonner"
+import { Loader } from "lucide-react"
 
 export default function LoginPage() {
-  const [state, formAction, isPending] = useActionState(login, null);
+  const [state, formAction, isPending] = useActionState(login, null)
 
   useEffect(() => {
     if (state?.error) {
-      toast.error(state.error);
+      toast.error(state.error)
     }
-  }, [state]);
+  }, [state])
 
   return (
     <form action={formAction} className="p-6 md:p-8">
@@ -41,12 +41,12 @@ export default function LoginPage() {
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <a
-              href="#"
+            <Link
+              href="/forgot-password"
               className="ml-auto text-sm underline-offset-2 hover:underline"
             >
               Forgot your password?
-            </a>
+            </Link>
           </div>
           <Input id="password" name="password" type="password" required />
         </div>
@@ -75,5 +75,5 @@ export default function LoginPage() {
         </div>
       </div>
     </form>
-  );
+  )
 }

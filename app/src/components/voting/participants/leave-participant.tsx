@@ -1,58 +1,53 @@
-"use client";
+"use client"
 
-import { TParticipant } from "@/types/model";
-import React from "react";
+import React from "react"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useModalLeave } from "@/hooks/use-modal-leave";
-import { QueryClient } from "@tanstack/react-query";
-import { TSupabaseClient } from "@/utils/supabase/server";
-import { Button } from "@/components/ui/button";
-import { Loader, LogOut } from "lucide-react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { revalidateParticipant } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached";
-import { revalidateResultByVotingId } from "@/app/(api)/api/result/[session_id]/get-result-cached";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { LogOut } from "lucide-react"
+import { toast } from "sonner"
+import { revalidateParticipant } from "@/app/(api)/api/participant/[voting_id]/get-participant-cached"
+import { revalidateResultByVotingId } from "@/app/(api)/api/result/[session_id]/get-result-cached"
+import { useSupabase } from "@/utils/supabase/client"
 
-type Props = {
-  data: TParticipant;
-  query: QueryClient;
-  supabase: TSupabaseClient;
-};
+interface LeaveParticipantProps extends React.ComponentProps<typeof Dialog> {
+  id: number
+  voting_id: string
+}
 
-export default function LeaveParticipant({ data, query, supabase }: Props) {
-  const { isOpen, close } = useModalLeave();
-  const [loading, setLoading] = React.useState(false);
-  const router = useRouter();
+export default function LeaveParticipant({
+  id,
+  voting_id,
+  ...props
+}: LeaveParticipantProps) {
+  const supabase = useSupabase()
 
   const leaveHandler = async () => {
-    setLoading(true);
-    const { error } = await supabase.from("voters").delete().eq("id", data.id);
-    setLoading(false);
+    const toast_id = toast.loading("Leaving voting...", {
+      duration: Infinity,
+    })
+    const { error } = await supabase.from("voters").delete().eq("id", id)
+    toast.dismiss(toast_id)
 
     if (error) {
-      setLoading(false);
-      toast.error("Failed to leave the voting session");
-      return;
+      toast.error("Failed to leave the voting session")
+      return
     }
 
-    await revalidateParticipant(data.voting_id);
-    await revalidateResultByVotingId(data.voting_id);
-    setLoading(false);
-    close();
-    query.invalidateQueries({ queryKey: ["joined votings"] });
-    query.invalidateQueries({ queryKey: ["participants", data.voting_id] });
-    query.invalidateQueries({ queryKey: ["is participant", data.voting_id] });
-    router.push("/votings");
-  };
+    await revalidateParticipant(voting_id)
+    await revalidateResultByVotingId(voting_id)
+    window.location.reload()
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={close}>
+    <Dialog {...props}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Leave Voting Session</DialogTitle>
@@ -62,19 +57,18 @@ export default function LeaveParticipant({ data, query, supabase }: Props) {
             cannot be undone.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={close}>
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={leaveHandler}
-            disabled={loading}
-          >
-            {loading ? <Loader className="animate-spin" /> : <LogOut />}Leave
-          </Button>
-        </div>
+        <DialogFooter className="justify-end">
+          <DialogClose asChild>
+            <Button variant="secondary">Cancel</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button variant="destructive" onClick={leaveHandler}>
+              <LogOut />
+              Leave
+            </Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

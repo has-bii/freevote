@@ -3,22 +3,24 @@
 import React from "react"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useShareVoting } from "./use-share-voting"
 import { Button } from "@/components/ui/button"
 import { Fingerprint, LinkIcon } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import TooltipTimer from "@/components/tooltip-timer"
 
-export default function ShareVoting() {
-  const { close, id } = useShareVoting()
+interface ShareVotingProps extends React.ComponentProps<typeof Dialog> {
+  voting_id: string
+}
 
+export default function ShareVoting({ voting_id, ...props }: ShareVotingProps) {
   return (
-    <Dialog open={id !== null} onOpenChange={close}>
+    <Dialog {...props}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Share Your Voting Session</DialogTitle>
@@ -33,7 +35,7 @@ export default function ShareVoting() {
             <TooltipTimer
               text="copied"
               onClick={() => {
-                navigator.clipboard.writeText(id!)
+                navigator.clipboard.writeText(voting_id)
               }}
             >
               <Button variant="outline">
@@ -45,7 +47,7 @@ export default function ShareVoting() {
               text="copied"
               onClick={() => {
                 navigator.clipboard.writeText(
-                  `${process.env.NEXT_PUBLIC_APP_URL}/votings/${id}`,
+                  `${process.env.NEXT_PUBLIC_APP_URL}/votings/${voting_id}`,
                 )
               }}
             >
@@ -54,9 +56,9 @@ export default function ShareVoting() {
                 Copy Link
               </Button>
             </TooltipTimer>
-            <Button className="ml-auto" onClick={close}>
-              Done
-            </Button>
+            <DialogClose asChild>
+              <Button className="ml-auto">Done</Button>
+            </DialogClose>
           </TooltipProvider>
         </div>
       </DialogContent>

@@ -1,50 +1,60 @@
-"use client";
-import React from "react";
+"use client"
+import React from "react"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useDeleteVoting } from "../../hooks/votings/use-modal-delete-voting";
-import { useSupabase } from "@/utils/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Loader, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { revalidateVoting } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached";
+} from "@/components/ui/dialog"
+import { useSupabase } from "@/utils/supabase/client"
+import { useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+import { revalidateVoting } from "@/app/(api)/api/voting/[voting_id]/get-voting-by-id-cached"
+import { Trash2 } from "lucide-react"
 
-export default function DeleteVoting() {
-  const { data, close } = useDeleteVoting();
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const supabase = useSupabase();
-  const query = useQueryClient();
-  const router = useRouter();
+interface DeleteVotingProps extends React.ComponentProps<typeof Dialog> {
+  voting_id: string
+}
+
+export default function DeleteVoting({
+  voting_id,
+  ...props
+}: DeleteVotingProps) {
+  const supabase = useSupabase()
+  const query = useQueryClient()
+  const router = useRouter()
 
   const deleteHandler = React.useCallback(async () => {
-    if (!data) return;
+    const toast_id = toast.loading("Deleting voting data...", {
+      duration: Infinity,
+    })
 
-    setLoading(true);
+    const { error } = await supabase
+      .from("votings")
+      .delete()
+      .eq("id", voting_id)
 
-    const { error } = await supabase.from("votings").delete().eq("id", data.id);
+    toast.dismiss(toast_id)
 
     if (error) {
-      toast.error(error.message);
-      setLoading(false);
-      return;
+      toast.error(error.message)
+      return
     }
 
-    query.invalidateQueries({ queryKey: ["votings"] });
-    setLoading(false);
-    revalidateVoting(data.id);
-    close();
-    router.push("/votings");
-  }, [close, data, query, router, supabase]);
+    await revalidateVoting(voting_id)
+    query.invalidateQueries({ queryKey: ["votings"] })
+    revalidateVoting(voting_id)
+    router.push("/votings")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
-    <Dialog open={data !== null} onOpenChange={close}>
+    <Dialog {...props}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
@@ -53,19 +63,18 @@ export default function DeleteVoting() {
             data from our servers.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={close} disabled={loading}>
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={deleteHandler}
-            disabled={loading}
-          >
-            {loading ? <Loader className="animate-spin" /> : <Trash2 />}Delete
-          </Button>
-        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="secondary">Cancel</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button variant="destructive" onClick={deleteHandler}>
+              <Trash2 />
+              Delete
+            </Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

@@ -75,8 +75,8 @@ export type Database = {
           description: string | null
           id: string
           name: string
-          session_end_at: string
-          session_start_at: string
+          session_end_at: string | null
+          session_start_at: string | null
           voting_id: string
         }
         Insert: {
@@ -85,8 +85,8 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
-          session_end_at: string
-          session_start_at: string
+          session_end_at?: string | null
+          session_start_at?: string | null
           voting_id: string
         }
         Update: {
@@ -95,8 +95,8 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
-          session_end_at?: string
-          session_start_at?: string
+          session_end_at?: string | null
+          session_start_at?: string | null
           voting_id?: string
         }
         Relationships: [
@@ -244,6 +244,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_participant: {
+        Args: {
+          id: string
+        }
+        Returns: boolean
+      }
       end_expired_voting_sessions: {
         Args: Record<PropertyKey, never>
         Returns: undefined

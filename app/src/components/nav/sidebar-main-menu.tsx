@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { HomeIcon, VoteIcon } from "lucide-react";
+} from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
+import { Globe, HomeIcon, VoteIcon } from "lucide-react"
 
 export default function SidebarMainMenu() {
-  const pathname = usePathname();
-  const { setOpenMobile } = useSidebar();
+  const pathname = usePathname()
+  const { setOpenMobile } = useSidebar()
 
   return (
     <SidebarGroup>
@@ -32,6 +32,18 @@ export default function SidebarMainMenu() {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
+          <SidebarMenuButton asChild isActive={pathname === "/"}>
+            <Link
+              href="/public"
+              onClick={() => setOpenMobile(false)}
+              className="truncate"
+            >
+              <Globe />
+              Public Votings
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
           <SidebarMenuButton asChild isActive={pathname === "/votings"}>
             <Link
               href="/votings"
@@ -45,5 +57,5 @@ export default function SidebarMainMenu() {
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  );
+  )
 }

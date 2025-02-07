@@ -1,6 +1,7 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+"use client"
 
-import React from "react";
+import React from "react"
 import {
   Drawer,
   DrawerClose,
@@ -10,12 +11,12 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, CircleCheckBig } from "lucide-react";
-import { TChoice } from "@/types/model";
-import { CarouselApi } from "@/components/ui/carousel";
-import { useMediaQuery } from "usehooks-ts";
+} from "@/components/ui/drawer"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft, ArrowRight, CircleCheckBig } from "lucide-react"
+import { TChoice } from "@/types/model"
+import { CarouselApi } from "@/components/ui/carousel"
+import { useMediaQuery } from "usehooks-ts"
 import {
   Dialog,
   DialogContent,
@@ -24,29 +25,44 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import ChoicesCarousel from "@/components/voting/vote/choices-carousel";
-import { useSupabase } from "@/utils/supabase/client";
-import { useHasVoted } from "@/hooks/votes/use-has-voted";
+} from "@/components/ui/dialog"
+import ChoicesCarousel from "@/components/voting/vote/choices-carousel"
+import { useSupabase } from "@/utils/supabase/client"
+import { useHasVoted } from "@/hooks/votes/use-has-voted"
 
 type Props = {
-  choices: TChoice[];
-  name: string;
-  description: string | null;
-  session_id: string;
-};
+  choices: TChoice[]
+  name: string
+  description: string | null
+  session_id: string
+}
 
 const GiveVote = React.memo(function GiveVote(props: Props) {
-  const { choices, description, name, session_id } = props;
-  const [open, setOpen] = React.useState(false);
-  const supabase = useSupabase();
+  const { choices, description, name, session_id } = props
+  const [open, setOpen] = React.useState(false)
+  const supabase = useSupabase()
   const { data: hasVoted } = useHasVoted({
     session_id,
     supabase,
     enabled: open,
-  });
-  const [api, setApi] = React.useState<CarouselApi>();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  })
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+  const [count, setCount] = React.useState(0)
+  const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  React.useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap() + 1)
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1)
+    })
+  }, [api])
 
   if (isDesktop)
     return (
@@ -94,7 +110,7 @@ const GiveVote = React.memo(function GiveVote(props: Props) {
           </div>
         </DialogContent>
       </Dialog>
-    );
+    )
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -143,7 +159,7 @@ const GiveVote = React.memo(function GiveVote(props: Props) {
         </div>
       </DrawerContent>
     </Drawer>
-  );
-});
+  )
+})
 
-export default GiveVote;
+export default GiveVote

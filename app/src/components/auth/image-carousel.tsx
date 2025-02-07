@@ -53,7 +53,7 @@ export default function ImageCarousel() {
   }, [api])
 
   return (
-    <div className="hidden flex-1 overflow-hidden bg-muted lg:flex">
+    <div className="hidden flex-1 overflow-hidden bg-foreground dark:bg-muted lg:flex">
       <div className="m-auto w-full space-y-8">
         <Carousel setApi={setApi} className="w-full max-w-full">
           <CarouselContent>
@@ -69,7 +69,9 @@ export default function ImageCarousel() {
                   />
                 </div>
                 <div className="mx-auto max-w-md space-y-2">
-                  <p className="text-center text-xl font-semibold">{title}</p>
+                  <p className="text-center text-xl font-semibold text-white">
+                    {title}
+                  </p>
                   <p className="text-center text-sm text-muted-foreground">
                     {desc}
                   </p>
@@ -86,9 +88,7 @@ export default function ImageCarousel() {
               onClick={() => api?.scrollTo(i)}
               className={cn(
                 "h-1 w-20 transition-colors duration-300 ease-in-out",
-                current === i + 1
-                  ? "bg-black dark:bg-white"
-                  : "bg-black/20 dark:bg-white/20",
+                current === i + 1 ? "bg-white" : "bg-white/20",
               )}
             />
           ))}

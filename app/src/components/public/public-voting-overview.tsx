@@ -2,7 +2,6 @@ import { TProfile, TVoting } from "@/types/model"
 import React from "react"
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,

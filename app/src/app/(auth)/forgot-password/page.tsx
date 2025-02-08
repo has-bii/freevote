@@ -55,9 +55,9 @@ export default function ForgotPasswordPage() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center text-center">
-            <h1 className="text-2xl font-bold">Welcome back</h1>
+            <h1 className="text-2xl font-bold">Forgot Password?</h1>
             <p className="text-balance text-muted-foreground">
-              Login to your account
+              No worries, we&apos;ll send you an OTP
             </p>
           </div>
 
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
           />
 
           <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending && <Loader className="animate-spin" />}Send reset email
+            {isPending && <Loader className="animate-spin" />}Send OTP
           </Button>
           <div className="text-center text-sm">
             Already have an account?&nbsp;

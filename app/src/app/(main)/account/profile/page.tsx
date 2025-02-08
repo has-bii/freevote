@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import React from "react";
-import { Separator } from "@/components/ui/separator";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react"
+import { Separator } from "@/components/ui/separator"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -11,37 +11,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { full_name } from "@/lib/form-schema";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { useSupabase } from "@/utils/supabase/client";
-import { useGetAuth, useUpdateAuth } from "@/hooks/auth/use-auth";
-import { useQueryClient } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
-import ChangePhotoForm from "@/components/change-photo-form";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { z } from "zod"
+import { full_name } from "@/lib/form-schema"
+import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
+import { useSupabase } from "@/utils/supabase/client"
+import { useGetAuth, useUpdateAuth } from "@/hooks/auth/use-auth"
+import { useQueryClient } from "@tanstack/react-query"
+import { Loader } from "lucide-react"
+import ChangePhotoForm from "@/components/change-photo-form"
 
 const FormSchema = z.object({
   full_name: full_name,
-});
+})
 
 export default function ProfilePage() {
-  const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
-  const query = useQueryClient();
-  const { mutateAsync, isPending } = useUpdateAuth(supabase, query);
+  const supabase = useSupabase()
+  const { data: user } = useGetAuth(supabase)
+  const query = useQueryClient()
+  const { mutateAsync, isPending } = useUpdateAuth(supabase, query)
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     values: {
-      full_name: (user?.user_metadata.full_name as string | undefined) ?? "",
+      full_name: (user?.user_metadata?.full_name as string | undefined) ?? "",
     },
-  });
+  })
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    await mutateAsync(data);
-  };
+    await mutateAsync(data)
+  }
 
   return (
     <div className="w-full flex-1 lg:max-w-2xl">
@@ -83,5 +83,5 @@ export default function ProfilePage() {
         </Form>
       </div>
     </div>
-  );
+  )
 }

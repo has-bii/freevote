@@ -1,7 +1,7 @@
-import { TSupabaseClient } from "@/utils/supabase/server";
-import { User } from "@supabase/supabase-js";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { TSupabaseClient } from "@/utils/supabase/server"
+import { User } from "@supabase/supabase-js"
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 export const useGetAuth = (supabase: TSupabaseClient) =>
   useQuery({
@@ -9,17 +9,17 @@ export const useGetAuth = (supabase: TSupabaseClient) =>
     queryFn: async () => {
       const {
         data: { user },
-      } = await supabase.auth.getUser();
-      return user;
+      } = await supabase.auth.getUser()
+      return user
     },
-  });
+  })
 
 type TUpdateAuthPayload = {
-  email?: string;
-  full_name?: string;
-  password?: string;
-  avatar?: string;
-};
+  email?: string
+  full_name?: string
+  password?: string
+  avatar?: string
+}
 
 export const useUpdateAuth = (
   supabase: TSupabaseClient,
@@ -33,19 +33,19 @@ export const useUpdateAuth = (
         password: payload.password,
         data: {
           full_name: payload.full_name,
-          avatar: payload.avatar,
+          avatar_url: payload.avatar,
         },
-      });
+      })
 
-      if (error) throw new Error(error.name);
+      if (error) throw new Error(error.name)
 
-      return data.user;
+      return data.user
     },
     onSuccess: (data) => {
-      query.setQueryData<User>(["auth"], () => data);
-      if (onSuccess) onSuccess();
+      query.setQueryData<User>(["auth"], () => data)
+      if (onSuccess) onSuccess()
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message)
     },
-  });
+  })

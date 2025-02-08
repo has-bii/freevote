@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   BadgeCheck,
@@ -6,9 +6,9 @@ import {
   ChevronsUpDown,
   CreditCard,
   Sparkles,
-} from "lucide-react";
+} from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,22 +17,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
-import Link from "next/link";
-import { useSupabase } from "@/utils/supabase/client";
-import { useGetAuth } from "@/hooks/auth/use-auth";
-import LogoutButton from "./logout-button";
+} from "@/components/ui/sidebar"
+import Link from "next/link"
+import { useSupabase } from "@/utils/supabase/client"
+import { useGetAuth } from "@/hooks/auth/use-auth"
+import LogoutButton from "./logout-button"
 
 export function NavUser() {
-  const supabase = useSupabase();
-  const { data: user } = useGetAuth(supabase);
-  const { isMobile } = useSidebar();
+  const supabase = useSupabase()
+  const { data: user } = useGetAuth(supabase)
+  const { isMobile } = useSidebar()
 
   return (
     <SidebarMenu>
@@ -45,7 +45,7 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={user?.user_metadata?.avatar}
+                  src={user?.user_metadata?.avatar_url}
                   alt={user?.user_metadata?.full_name}
                 />
                 <AvatarFallback className="rounded-lg">
@@ -74,7 +74,7 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={user?.user_metadata?.avatar}
+                    src={user?.user_metadata?.avatar_url}
                     alt={user?.user_metadata?.full_name}
                   />
                   <AvatarFallback className="rounded-lg">
@@ -122,5 +122,5 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }
